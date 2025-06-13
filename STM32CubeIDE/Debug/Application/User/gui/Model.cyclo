@@ -1,0 +1,6 @@
+C:/TouchGFXProjects/SimpleRacing/TouchGFX/gui/src/model/Model.cpp:4:1:Model::Model()	1
+C:/TouchGFXProjects/SimpleRacing/TouchGFX/gui/src/model/Model.cpp:10:6:void Model::tick()	1
+C:/TouchGFXProjects/SimpleRacing/TouchGFX/gui/src/model/Model.cpp:15:6:void Model::update(int16_t)	1
+C:/TouchGFXProjects/SimpleRacing/TouchGFX/gui/src/model/Model.cpp:20:9:int16_t Model::GetImageX()	1
+C:/TouchGFXProjects/SimpleRacing/TouchGFX/gui/src/model/Model.cpp:25:5:int Model::getHighestScore() const	1
+C:/TouchGFXProjects/SimpleRacing/TouchGFX/gui/src/model/Model.cpp:28:6:void Model::setHighestScore(int)	2

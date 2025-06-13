@@ -1,0 +1,269 @@
+{
+  "Application": {
+    "Screens": [
+      {
+        "Name": "Screen1",
+        "Components": [
+          {
+            "Type": "Button",
+            "Name": "button1",
+            "X": 20,
+            "Y": 199,
+            "Width": 200,
+            "Height": 83,
+            "Pressed": "Start-Button-Vector.png",
+            "Released": "Start-Button-Vector.png"
+          },
+          {
+            "Type": "TextArea",
+            "Name": "textArea1",
+            "X": 53,
+            "Y": 103,
+            "Width": 134,
+            "Height": 24,
+            "TextId": "__SingleUse_3G8C",
+            "TextRotation": "0",
+            "Color": {
+              "Red": 240,
+              "Green": 10,
+              "Blue": 10
+            },
+            "AutoSize": true
+          },
+          {
+            "Type": "TextArea",
+            "Name": "highestScore",
+            "Y": 139,
+            "Width": 240,
+            "Height": 42,
+            "TextId": "HSCORE",
+            "TextRotation": "0",
+            "Color": {
+              "Red": 252,
+              "Green": 20,
+              "Blue": 20
+            },
+            "Wildcard1": {
+              "TextId": "HSCORET",
+              "UseBuffer": true,
+              "BufferSize": 10
+            }
+          },
+          {
+            "Type": "TextArea",
+            "Name": "textArea2",
+            "X": 7,
+            "Y": 14,
+            "Width": 227,
+            "Height": 40,
+            "TextId": "__SingleUse_MXSW",
+            "TextRotation": "0",
+            "Color": {
+              "Red": 252,
+              "Green": 233,
+              "Blue": 15
+            },
+            "AutoSize": true
+          }
+        ],
+        "Interactions": [
+          {
+            "InteractionName": "Interaction2",
+            "Trigger": {
+              "Type": "TriggerClicked",
+              "TriggerComponent": "button1"
+            },
+            "Action": {
+              "Type": "ActionGotoScreen",
+              "ScreenTransitionType": "ScreenTransitionCover",
+              "ScreenTransitionDirection": "East",
+              "ActionComponent": "Screen2"
+            }
+          }
+        ]
+      },
+      {
+        "Name": "Screen2",
+        "Components": [
+          {
+            "Type": "Image",
+            "Name": "track0",
+            "Width": 571,
+            "Height": 320,
+            "RelativeFilename": "background.png"
+          },
+          {
+            "Type": "Image",
+            "Name": "track1",
+            "Y": 52,
+            "Width": 240,
+            "Height": 193,
+            "Visible": false,
+            "RelativeFilename": "gameover.png"
+          },
+          {
+            "Type": "FlexButton",
+            "Name": "flexButton1",
+            "X": 204,
+            "Y": 282,
+            "Width": 32,
+            "Height": 32,
+            "ButtonTrigger": {
+              "Type": "ClickButtonTrigger"
+            },
+            "ButtonStyles": [
+              {
+                "Type": "IconButtonStyle",
+                "IconReleased": "__designer\\Blue_Icons_Home_32.png",
+                "IconPressed": "__designer\\Blue_Icons_Home_32.png"
+              }
+            ]
+          },
+          {
+            "Type": "TextArea",
+            "Name": "score",
+            "X": 100,
+            "Y": 166,
+            "Width": 136,
+            "Height": 49,
+            "TextId": "SCORE",
+            "TextRotation": "0",
+            "Color": {
+              "Red": 245,
+              "Green": 12,
+              "Blue": 12
+            },
+            "Wildcard1": {
+              "TextId": "SCORE_T",
+              "UseBuffer": true,
+              "BufferSize": 10
+            }
+          },
+          {
+            "Type": "TextArea",
+            "Name": "textArea1",
+            "X": 185,
+            "Y": 136,
+            "Width": 55,
+            "Height": 24,
+            "TextId": "__SingleUse_1D7L",
+            "TextRotation": "0",
+            "Color": {
+              "Red": 180,
+              "Green": 17,
+              "Blue": 245
+            },
+            "AutoSize": true
+          },
+          {
+            "Type": "TextArea",
+            "Name": "textArea2",
+            "X": 191,
+            "Y": 54,
+            "Width": 43,
+            "Height": 24,
+            "TextId": "__SingleUse_JK4A",
+            "TextRotation": "0",
+            "Color": {
+              "Red": 158,
+              "Green": 15,
+              "Blue": 247
+            },
+            "AutoSize": true
+          }
+        ],
+        "Interactions": [
+          {
+            "InteractionName": "Interaction1",
+            "HasCompletedTrigger": true,
+            "Trigger": {
+              "Type": "TriggerClicked",
+              "TriggerComponent": "flexButton1"
+            },
+            "Action": {
+              "Type": "ActionGotoScreen",
+              "ScreenTransitionType": "ScreenTransitionWipe",
+              "ScreenTransitionDirection": "East",
+              "ActionComponent": "Screen1"
+            }
+          },
+          {
+            "InteractionName": "Interaction2",
+            "Trigger": {
+              "Type": "TriggerInteractionCompleted",
+              "InteractionToTriggerOn": "Interaction1"
+            },
+            "Action": {
+              "Type": "ActionCustom",
+              "FunctionName": "ExitFromScreen2"
+            }
+          }
+        ]
+      }
+    ],
+    "CustomContainerDefinitions": [],
+    "Name": "MyApplication_D01",
+    "Resolution": {
+      "Width": 240,
+      "Height": 320
+    },
+    "SelectedColorDepth": 16,
+    "StartupScreenName": "Screen1",
+    "SelectedStartupLanguage": "GB",
+    "TouchGfxPath": "../Middlewares/ST/touchgfx",
+    "UIPath": ".",
+    "AvailableColorDepths": [
+      16
+    ],
+    "AvailableLCDs": {
+      "16": "LCD16bpp"
+    },
+    "AvailableSections": [
+      "ExtFlashSection",
+      "IntFlashSection"
+    ],
+    "AvailableResolutions": [
+      {
+        "Width": 240,
+        "Height": 320
+      }
+    ],
+    "PhysicalButtons": [],
+    "FrameworkFeatures": {
+      "LCD16bpp": {
+        "Id": "LCD16bpp",
+        "Features": [
+          {
+            "Id": "L8Compression",
+            "Features": [
+              {
+                "Id": "L4",
+                "IsEnabled": true
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "GenerateAssetsCommand": "make -f simulator/gcc/Makefile assets -j8",
+    "PostGenerateCommand": "touchgfx update_project --project-file=simulator/msvs/Application.vcxproj",
+    "PostGenerateTargetCommand": "touchgfx update_project",
+    "CompileSimulatorCommand": "make -f simulator/gcc/Makefile -j8",
+    "RunSimulatorCommand": "build\\bin\\simulator.exe",
+    "CompileTargetCommandOverride": "make -f ../gcc/Makefile -j8",
+    "FlashTargetCommandOverride": "make -f ../gcc/Makefile flash",
+    "LandscapeSkinX": 0,
+    "LandscapeSkinY": 0,
+    "PortraitSkinX": 0,
+    "PortraitSkinY": 0,
+    "DisplayOrientation": "Portrait",
+    "Family": "STM32F4",
+    "SubFamily": "STM32F429/439",
+    "Platform": "m4",
+    "ProjectFile": "../STM32F429I_DISCO_REV_D01.ioc",
+    "OptionalComponentsRoot": "../Middlewares/ST/touchgfx_components",
+    "OptionalComponents": []
+  },
+  "Version": "4.24.1",
+  "CreatedBy": "4.20.0"
+}

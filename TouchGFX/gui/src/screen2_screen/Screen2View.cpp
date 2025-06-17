@@ -1,11 +1,11 @@
 #include <gui/screen2_screen/Screen2View.hpp>
 #include <touchgfx/Color.hpp>
-#include "TetrisEngine.hpp"
 #include "cmsis_os.h"
 #include "main.h"
 
 extern osMessageQueueId_t movingQueueHandle;
 extern osMessageQueueId_t speedQueueHandle;
+//extern void DoubleBeepTask(void *param);
 
 Screen2View::Screen2View()
 {
@@ -22,7 +22,7 @@ Screen2View::Screen2View()
         }
     }
 
-    // Khởi tạo lưới preview (4x4 cells, 8x8 pixels each)
+    //khởi tạo lưới để hiện thị next block
 	int previewX = 200;
 	int previewY = 90;
 	for (int y = 0; y < 4; y++) {
@@ -38,6 +38,14 @@ Screen2View::Screen2View()
 	}
 
 	track1.setVisible(false);
+    gameOver = false;
+    DF_SendCommand(0x0F, 0x02, 0x01);
+
+    while(osMessageQueueGetCount(movingQueueHandle) > 0){
+    	char res = 'a';
+    	osMessageQueueGet(movingQueueHandle, &res, NULL, 10);
+    }
+
 }
 
 void Screen2View::setupScreen()
@@ -51,32 +59,36 @@ void Screen2View::setupScreen()
 void Screen2View::tearDownScreen()
 {
     Screen2ViewBase::tearDownScreen();
+//    presenter->UpdateImageX(localImageX);
 }
 
 void Screen2View::handleTickEvent()
 {
     if (++tickCount % 20 == 0) {
-    	if(engine.isGameOver()) {
-    		for(int y = 0; y < GRID_HEIGHT; y++) {
-    			for(int x = 0; x < GRID_WIDTH; x++) {
-    				colBoxes[y][x].setVisible(false);
-    				colBoxes[y][x].invalidate();
-    			}
-    		}
-    		for (int y = 0; y < 4; y++) {
+		if(engine.isGameOver()) {	//kiểm tra gameover
+
+			//set các ô là ko hiển thị nếu gameover
+			for(int y = 0; y < GRID_HEIGHT; y++) {
+				for(int x = 0; x < GRID_WIDTH; x++) {
+					colBoxes[y][x].setVisible(false);
+					colBoxes[y][x].invalidate();
+				}
+			}
+			for (int y = 0; y < 4; y++) {
 				for (int x = 0; x < 4; x++) {
 					previewBoxes[y][x].setVisible(false);
 					previewBoxes[y][x].invalidate();
 				}
-    		}
-    		textArea1.setVisible(false);
-    		textArea2.setVisible(false);
-    		score.setVisible(false);
-    		track1.setVisible(true);
-    		track1.invalidate();
-    		presenter->setHighestScore(engine.getScore());
-    		return;
-    	}
+			}
+			textArea1.setVisible(false);
+			textArea2.setVisible(false);
+			score.setVisible(false);
+			track1.setVisible(true);
+			track1.invalidate();
+			presenter->setHighestScore(engine.getScore());
+			return;
+		}
+
 
     	if(osMessageQueueGetCount(movingQueueHandle) > 0){
     		char res;
@@ -85,6 +97,7 @@ void Screen2View::handleTickEvent()
     		else if(res == 'R') engine.moveRight();
     		else if(res == 'T') engine.rotate();
     		else if(res == 'D') engine.drop();
+    		osThreadNew(SingleBeepTask, NULL, NULL);
     	}
         engine.update();
         Unicode::snprintf(scoreBuffer, SCORE_SIZE, "%d", engine.getScore());
@@ -93,6 +106,10 @@ void Screen2View::handleTickEvent()
         if(engine.getTakeScore()){
         	osThreadNew(DoubleBeepTask, NULL, NULL);
         	engine.setTakeScore(false);
+        }
+        if(engine.isGameOver() && gameOver == false){
+        	gameOver = true;
+        	osThreadNew(GameOverTask, NULL, NULL);
         }
         drawGrid();
         drawPreview();
@@ -161,4 +178,3 @@ void Screen2View::drawPreview() {
 		}
 	}
 }
-

@@ -76,7 +76,7 @@ SPI_HandleTypeDef hspi5;
 
 SDRAM_HandleTypeDef hsdram1;
 
-UART_HandleTypeDef huart1;
+UART_HandleTypeDef huart4;
 
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
@@ -105,6 +105,7 @@ const osThreadAttr_t doubleBeep_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
+
 
 /* Definitions for GUI_Task */
 osThreadId_t GUI_TaskHandle;
@@ -180,19 +181,6 @@ uint32_t I2c3Timeout = I2C3_TIMEOUT_MAX; /*<! Value of Timeout when I2C communic
 uint32_t Spi5Timeout = SPI5_TIMEOUT_MAX; /*<! Value of Timeout when SPI communication fails */
 /* USER CODE END 0 */
 
-void DF_SendCommand(uint8_t cmd, uint8_t param1, uint8_t param2){
-	uint8_t buffer[10] = {0x7E, 0xFF, 0x06, cmd, 0x00, param1, param2, 0x00, 0x00, 0xEF};
-	uint16_t checksum = -(buffer[1] + buffer[2] + buffer[3] + buffer[4] + buffer[5] + buffer[6]);
-	buffer[7] = (checksum >> 8) & 0xFF;
-	buffer[8] = checksum & 0xFF;
-
-	HAL_UART_Transmit(&huart1, buffer, 10, HAL_MAX_DELAY);
-	HAL_Delay(500);
-}
-
-void DF_PlayFolder(uint8_t folder, uint8_t file){
-	DF_SendCommand(0x0F, folder, file);
-}
 
 /**
   * @brief  The application entry point.
@@ -231,6 +219,16 @@ int main(void)
   MX_TouchGFX_Init();
   MX_UART_Init();
 
+  HAL_Delay(1000);
+  DF_SendCommand(0x3F, 0, 0);
+  HAL_Delay(200);
+  DF_SendCommand(0x06, 0x00, 15);
+  HAL_Delay(200);
+  DF_SendCommand(0x0F, 0x02, 0x02);
+//  HAL_Delay(50);
+//  DF_SendCommand(0x08, 0x00, 0x02);
+//  HAL_Delay(50);
+//  DF_SendCommand(0x08, 0, 0x02);
  // HAL_UART_Transmit(huart, pData, Size, Timeout)
   /* USER CODE BEGIN 2 */
 
@@ -265,7 +263,7 @@ int main(void)
   /* creation of GUI_Task */
   GUI_TaskHandle = osThreadNew(TouchGFX_Task, NULL, &GUI_Task_attributes);
 
-  HAL_UART_Transmit(&huart1, (const uint8_t*)"Hello\n", 7, 100);
+//  HAL_UART_Transmit(&huart1, (const uint8_t*)"Hello\n", 7, 100);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -284,8 +282,8 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-	  HAL_UART_Transmit(&huart1, (const uint8_t*)"Hello\n", 7, 100);
-	  HAL_Delay(1000);
+//	  HAL_UART_Transmit(&huart1, (const uint8_t*)"Hello\n", 7, 100);
+//	  HAL_Delay(1000);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -606,15 +604,15 @@ static void MX_FMC_Init(void)
 }
 
 static void MX_UART_Init(void){
-	  huart1.Instance = USART1;
-	  huart1.Init.BaudRate = 115200;
-	  huart1.Init.WordLength = UART_WORDLENGTH_8B;
-	  huart1.Init.StopBits = UART_STOPBITS_1;
-	  huart1.Init.Parity = UART_PARITY_NONE;
-	  huart1.Init.Mode = UART_MODE_TX_RX;
-	  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-	  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
-	  if (HAL_UART_Init(&huart1) != HAL_OK)
+	  huart4.Instance = UART4;
+	  huart4.Init.BaudRate = 9600;
+	  huart4.Init.WordLength = UART_WORDLENGTH_8B;
+	  huart4.Init.StopBits = UART_STOPBITS_1;
+	  huart4.Init.Parity = UART_PARITY_NONE;
+	  huart4.Init.Mode = UART_MODE_TX_RX;
+	  huart4.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+	  huart4.Init.OverSampling = UART_OVERSAMPLING_16;
+	  if (HAL_UART_Init(&huart4) != HAL_OK)
 	  {
 	    Error_Handler();
 	  }
@@ -670,10 +668,12 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PA0 interrupt rising edge*/
-  GPIO_InitStruct.Pin = GPIO_PIN_0;
+  GPIO_InitStruct.Pin = GPIO_PIN_3;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : PG2 and PG3 for input */
   GPIO_InitStruct.Pin = GPIO_PIN_2 | GPIO_PIN_3;
@@ -685,6 +685,20 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  GPIO_InitStruct.Pin = GPIO_PIN_13;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
+
+
+  GPIO_InitStruct.Pin = GPIO_PIN_0;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  HAL_NVIC_SetPriority(EXTI0_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 
 //  GPIO_InitStruct.Pin = GPIO_PIN_3;
 //  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -1036,13 +1050,13 @@ void StartDefaultTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-	if(osMessageQueueGetCount(speedQueueHandle) < 1){
-		char res;
-		if(HAL_GPIO_ReadPin(GPIOG, GPIO_PIN_3) == GPIO_PIN_RESET){
-			res = 'D';
-			osMessageQueuePut(speedQueueHandle, &res, 0, 10);
-		}
-	}
+//	if(osMessageQueueGetCount(speedQueueHandle) < 1){
+//		char res;
+//		if(HAL_GPIO_ReadPin(GPIOG, GPIO_PIN_3) == GPIO_PIN_RESET){
+//			res = 'D';
+//			osMessageQueuePut(speedQueueHandle, &res, 0, 10);
+//		}
+//	}
 	osDelay(10);
   }
   /* USER CODE END 5 */
@@ -1050,22 +1064,26 @@ void StartDefaultTask(void *argument)
 
 
 void MovingTask(void *argument){
+	static int last_time = 0;
 	for(;;){
 		if(osMessageQueueGetCount(movingQueueHandle) < 1){
-			char res;
-			osThreadNew(SingleBeepTask, NULL, &singleBeep_attributes);
-			if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_12) == GPIO_PIN_RESET){
-				res = 'L';
-				osMessageQueuePut(movingQueueHandle, &res, 0, 10);
-			}else if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_13) == GPIO_PIN_RESET){
-				res = 'R';
-				osMessageQueuePut(movingQueueHandle, &res, 0, 10);
-			}else if(HAL_GPIO_ReadPin(GPIOG, GPIO_PIN_2) == GPIO_PIN_RESET){
-				res = 'T';
-				osMessageQueuePut(movingQueueHandle, &res, 0, 10);
-			}else if(HAL_GPIO_ReadPin(GPIOG, GPIO_PIN_3) == GPIO_PIN_RESET){
-				res = 'D';
-				osMessageQueuePut(movingQueueHandle, &res, 0, 10);
+			if(HAL_GetTick() - last_time > 200){
+				char res;
+				//osThreadNew(SingleBeepTask, NULL, &singleBeep_attributes);
+				if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_12) == GPIO_PIN_RESET){
+					res = 'L';
+					osMessageQueuePut(movingQueueHandle, &res, 0, 10);
+				}else if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_13) == GPIO_PIN_RESET){
+					res = 'R';
+					osMessageQueuePut(movingQueueHandle, &res, 0, 10);
+				}else if(HAL_GPIO_ReadPin(GPIOG, GPIO_PIN_2) == GPIO_PIN_RESET){
+					res = 'T';
+					osMessageQueuePut(movingQueueHandle, &res, 0, 10);
+				}else if(HAL_GPIO_ReadPin(GPIOG, GPIO_PIN_3) == GPIO_PIN_RESET){
+					res = 'D';
+					osMessageQueuePut(movingQueueHandle, &res, 0, 10);
+				}
+				last_time = HAL_GetTick();
 			}
 		}
 		osDelay(10);
@@ -1073,21 +1091,38 @@ void MovingTask(void *argument){
 }
 
 void SingleBeepTask(void *param){
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
-	osDelay(100);
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_SET);
+	osDelay(50);
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_RESET);
+	HAL_GPIO_TogglePin(GPIOG, GPIO_PIN_13);
 	osThreadExit();
 }
 
 void DoubleBeepTask(void *param){
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_SET);
-	osDelay(100);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_RESET);
-	osDelay(100);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_SET);
-	osDelay(100);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_SET);
+	osDelay(50);
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_RESET);
+	osDelay(50);
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_SET);
+	osDelay(50);
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_RESET);
 	osThreadExit();
+}
+
+void GameOverTask(void *param){
+	DF_SendCommand(0x0F, 0x02, 0x03);
+	osDelay(2000);
+	DF_SendCommand(0x0F, 0x02, 0x01);
+	osThreadExit();
+}
+
+void DF_SendCommand(uint8_t cmd, uint8_t param1, uint8_t param2){
+	uint8_t buffer[10] = {0x7E, 0xFF, 0x06, cmd, 0x00, param1, param2, 0x00, 0x00, 0xEF};
+	uint16_t checksum = -(buffer[1] + buffer[2] + buffer[3] + buffer[4] + buffer[5] + buffer[6]);
+	buffer[7] = (checksum >> 8) & 0xFF;
+	buffer[8] = checksum & 0xFF;
+
+	HAL_UART_Transmit(&huart4, buffer, 10, HAL_MAX_DELAY);
 }
 
 /**
@@ -1111,6 +1146,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   /* USER CODE END Callback 1 */
 }
 
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+	DF_SendCommand(0x19, 0x00, 0x00);
+	HAL_GPIO_TogglePin(GPIOG, GPIO_PIN_13);
+}
 /**
   * @brief  This function is executed in case of error occurrence.
   * @retval None

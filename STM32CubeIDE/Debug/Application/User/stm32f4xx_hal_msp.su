@@ -11,4 +11,4 @@ C:/TouchGFXProjects/SimpleRacing/Core/Src/stm32f4xx_hal_msp.c:448:6:HAL_SPI_MspI
 C:/TouchGFXProjects/SimpleRacing/Core/Src/stm32f4xx_hal_msp.c:485:6:HAL_SPI_MspDeInit	0	static
 C:/TouchGFXProjects/SimpleRacing/Core/Src/stm32f4xx_hal_msp.c:617:6:HAL_SDRAM_MspInit	48	static
 C:/TouchGFXProjects/SimpleRacing/Core/Src/stm32f4xx_hal_msp.c:703:6:HAL_SDRAM_MspDeInit	8	static
-C:/TouchGFXProjects/SimpleRacing/Core/Src/stm32f4xx_hal_msp.c:714:6:HAL_UART_MspInit	40	static
+C:/TouchGFXProjects/SimpleRacing/Core/Src/stm32f4xx_hal_msp.c:714:6:HAL_UART_MspInit	56	static

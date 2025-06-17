@@ -68,7 +68,10 @@ void Error_Handler(void);
 #define MCU_ACTIVE_Pin GPIO_PIN_5
 #define MCU_ACTIVE_GPIO_Port GPIOE
 /* USER CODE BEGIN Private defines */
+void SingleBeepTask(void *param);
 void DoubleBeepTask(void *param);
+void DF_SendCommand(uint8_t cmd, uint8_t param1, uint8_t param2);
+void GameOverTask(void *param);
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

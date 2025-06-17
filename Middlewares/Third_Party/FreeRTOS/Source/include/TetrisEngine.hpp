@@ -41,19 +41,19 @@ public:
 	bool getTakeScore() const { return takeScore; }
 	void generateNextBlock();
 	void getNextBlock(BlockMatrix& block, int& size) const;
-	bool isGameOver();
+	bool isGameOver() const { return gameOver; }
 
 private:
-	Grid grid;
-	BlockMatrix currBlock;
-	int currX, currY;
-	int blockSize;
-	bool gameOver;
-	int score;
-	bool takeScore;
-	int nextBlockSize;
-	int nextBlockId;
-	BlockMatrix nextBlock;
+	Grid grid;					//~ int grid[10][20] -> đánh dấu các ô trên lưới
+	BlockMatrix currBlock;		//~ int currBlock[4][4] -> đánh dấu các ô cho block hiện tại
+	int currX, currY;			//vị trí của block
+	int blockSize;				//size của block
+	bool gameOver;				//trạng thái game
+	int score;					//điểm
+	bool takeScore;				//ghi điểm?
+	int nextBlockSize;			//size khối tiếp theo
+	int nextBlockId;			//id khối tiếp theo
+	BlockMatrix nextBlock;		//khối tiếp theo
 
 	void spawnBlock();
 	bool checkCollision(int newX, int newY, const BlockMatrix& block);

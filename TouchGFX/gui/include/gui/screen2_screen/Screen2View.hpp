@@ -18,10 +18,11 @@ public:
     void drawPreview();
 
 protected:
-    TetrisEngine engine;
-    BoxWithBorder colBoxes[20][10];
-    BoxWithBorder previewBoxes[4][4];
-    int tickCount;
+    TetrisEngine engine;				//game engin
+    BoxWithBorder colBoxes[20][10];		//lưới box hiển thị
+    BoxWithBorder previewBoxes[4][4];	//next box
+    int tickCount;						//biếm đếm
+    bool gameOver;						//trạng thái game
 };
 
 #endif // SCREEN2VIEW_HPP

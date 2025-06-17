@@ -1,8 +1,9 @@
 #include <gui/screen1_screen/Screen1View.hpp>
+#include "main.h"
 
 Screen1View::Screen1View()
 {
-
+    DF_SendCommand(0x0F, 0x02, 0x02);
 }
 
 void Screen1View::setupScreen()

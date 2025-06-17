@@ -45,31 +45,35 @@ void TetrisEngine::init() {
     spawnBlock();
 }
 
+//tạo khối mới
 void TetrisEngine::generateNextBlock() {
     nextBlockId = osKernelGetTickCount() % 7;
     nextBlockSize = (nextBlockId == 0) ? 4 : 3;
     nextBlockSize = (nextBlockId == 1) ? 2 : nextBlockSize;
     for (int i = 0; i < 4; ++i)
         for (int j = 0; j < 4; ++j)
-            nextBlock[i][j] = Tetrominoes[nextBlockId][i][j];
+            nextBlock[i][j] = Tetrominoes[nextBlockId][i][j]; //đánh dấu các ô có thể hiển thị cho next block
 }
 
+//get next block (gán nextBlock và size nextBlock cho tham số truyền vào)
 void TetrisEngine::getNextBlock(BlockMatrix& block, int& size) const {
 	block = nextBlock;
 	size = nextBlockSize;
 }
 
+//gán khối mới cho khối hiện tại
 void TetrisEngine::spawnBlock() {
     if (nextBlockId == -1) generateNextBlock(); // Spawn đầu
     for (int i = 0; i < 4; ++i)
         for (int j = 0; j < 4; ++j)
-            currBlock[i][j] = nextBlock[i][j];
+            currBlock[i][j] = nextBlock[i][j];	//gán nextBlock cho currBlock
     blockSize = nextBlockSize;
+
+    //bắt đầu rơi tại vị trí giữa trên cùng
     currX = (GRID_WIDTH - blockSize) / 2;
     currY = 0;
     generateNextBlock(); // Tạo khối tiếp theo
 }
-
 
 //xoay block
 void TetrisEngine::rotateMatrix(BlockMatrix& mat) {
@@ -96,6 +100,8 @@ void TetrisEngine::getBlockBounds(const BlockMatrix& block, int& minX, int& maxX
 //kiểm tra va trạm
 bool TetrisEngine::checkCollision(int newX, int newY, const BlockMatrix& block) {
     int minX, maxX, minY, maxY;
+
+    //lấy bao ngoài của block
     getBlockBounds(block, minX, maxX, minY, maxY);
     for (int i = minY; i <= maxY; ++i)
         for (int j = minX; j <= maxX; ++j)
@@ -131,7 +137,7 @@ void TetrisEngine::clearLines() {
     for (int y = GRID_HEIGHT - 1; y >= 0; --y) {
         bool full = true;
         for (int x = 0; x < GRID_WIDTH; ++x)
-            if (!grid[y][x]) full = false;
+            if (!grid[y][x]) full = false; //-> có 1 ô chưa được đánh dấu -> chưa đầy hàng
 
         if (full) {
         	takeScore = true;
@@ -156,14 +162,6 @@ void TetrisEngine::update() {
 		}
 	}
 
-}
-
-//check gameover
-bool TetrisEngine::isGameOver() {
-	BlockMatrix newBlock = nextBlock;
-	int newX = GRID_WIDTH / 2;
-	int newY = 0;
-	return checkCollision(newX, newY, newBlock); // Nếu có va chạm, game over
 }
 
 //di chuyển trái

@@ -21,7 +21,7 @@ C:/TouchGFXProjects/SimpleRacing/TouchGFX/gui/src/screen2_screen/Screen2View.cpp
 ../../Middlewares/ST/touchgfx/framework/include/touchgfx/widgets/Widget.hpp:45:18:virtual void touchgfx::Widget::getLastChild(int16_t, int16_t, touchgfx::Drawable**)	3
 ../../Middlewares/ST/touchgfx/framework/include/touchgfx/Drawable.hpp:233:10:void touchgfx::Drawable::setPosition(int16_t, int16_t, int16_t, int16_t)	1
 ../../Middlewares/ST/touchgfx/framework/include/touchgfx/widgets/Box.hpp:33:5:touchgfx::Box::Box()	1
-C:/TouchGFXProjects/SimpleRacing/TouchGFX/gui/src/screen2_screen/Screen2View.cpp:119:6:void Screen2View::drawGrid()	8
-C:/TouchGFXProjects/SimpleRacing/TouchGFX/gui/src/screen2_screen/Screen2View.cpp:149:6:void Screen2View::drawPreview()	8
+C:/TouchGFXProjects/SimpleRacing/TouchGFX/gui/src/screen2_screen/Screen2View.cpp:120:6:void Screen2View::drawGrid()	8
+C:/TouchGFXProjects/SimpleRacing/TouchGFX/gui/src/screen2_screen/Screen2View.cpp:150:6:void Screen2View::drawPreview()	8
 C:/TouchGFXProjects/SimpleRacing/TouchGFX/gui/src/screen2_screen/Screen2View.cpp:65:6:virtual void Screen2View::handleTickEvent()	16
-C:/TouchGFXProjects/SimpleRacing/TouchGFX/gui/src/screen2_screen/Screen2View.cpp:10:1:Screen2View::Screen2View()	10
+C:/TouchGFXProjects/SimpleRacing/TouchGFX/gui/src/screen2_screen/Screen2View.cpp:9:1:Screen2View::Screen2View()	10

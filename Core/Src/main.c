@@ -78,6 +78,10 @@ SDRAM_HandleTypeDef hsdram1;
 
 UART_HandleTypeDef huart4;
 
+char last_button = 0;
+
+uint8_t currScreen = 1;
+
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
@@ -120,11 +124,6 @@ const osMessageQueueAttr_t movingQueue_attributes = {
 	.name = "moving queue",
 };
 
-osMessageQueueId_t speedQueueHandle;
-const osMessageQueueAttr_t speedQueue_attributes = {
-	.name = "speed queue",
-};
-osStatus_t r_state;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -225,11 +224,6 @@ int main(void)
   DF_SendCommand(0x06, 0x00, 15);
   HAL_Delay(200);
   DF_SendCommand(0x0F, 0x02, 0x02);
-//  HAL_Delay(50);
-//  DF_SendCommand(0x08, 0x00, 0x02);
-//  HAL_Delay(50);
-//  DF_SendCommand(0x08, 0, 0x02);
- // HAL_UART_Transmit(huart, pData, Size, Timeout)
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -252,7 +246,6 @@ int main(void)
   /* USER CODE BEGIN RTOS_QUEUES */
   /* creation of Queue1 */
   movingQueueHandle = osMessageQueueNew(4, sizeof(char), &movingQueue_attributes);
-  speedQueueHandle = osMessageQueueNew(4, sizeof(char), &speedQueue_attributes);
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
@@ -262,8 +255,6 @@ int main(void)
 
   /* creation of GUI_Task */
   GUI_TaskHandle = osThreadNew(TouchGFX_Task, NULL, &GUI_Task_attributes);
-
-//  HAL_UART_Transmit(&huart1, (const uint8_t*)"Hello\n", 7, 100);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -675,15 +666,16 @@ static void MX_GPIO_Init(void)
 
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : PG2 and PG3 for input */
+  /*Configure GPIO pin : PG2 and PG3 for interrupt rising edge */
   GPIO_InitStruct.Pin = GPIO_PIN_2 | GPIO_PIN_3;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
 
+  /*Configure GPIO pin : PB12 and PB13 for interrupt rising edge */
   GPIO_InitStruct.Pin = GPIO_PIN_12|GPIO_PIN_13;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   GPIO_InitStruct.Pin = GPIO_PIN_13;
@@ -697,14 +689,17 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  HAL_NVIC_SetPriority(EXTI0_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(EXTI0_IRQn, configMAX_SYSCALL_INTERRUPT_PRIORITY + 5, 0);
   HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 
-//  GPIO_InitStruct.Pin = GPIO_PIN_3;
-//  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-//  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-//  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-//  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_RESET);
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, configMAX_SYSCALL_INTERRUPT_PRIORITY + 5, 0);
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+
+  HAL_NVIC_SetPriority(EXTI2_IRQn, configMAX_SYSCALL_INTERRUPT_PRIORITY + 5, 0);
+  HAL_NVIC_EnableIRQ(EXTI2_IRQn);
+
+  HAL_NVIC_SetPriority(EXTI3_IRQn, configMAX_SYSCALL_INTERRUPT_PRIORITY + 5, 0);
+  HAL_NVIC_EnableIRQ(EXTI3_IRQn);
 
   /* EXTI interrupt init*/
   //HAL_NVIC_SetPriority(EXTI0_IRQn, configMAX_SYSCALL_INTERRUPT_PRIORITY+5 , 0);
@@ -1050,13 +1045,7 @@ void StartDefaultTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-//	if(osMessageQueueGetCount(speedQueueHandle) < 1){
-//		char res;
-//		if(HAL_GPIO_ReadPin(GPIOG, GPIO_PIN_3) == GPIO_PIN_RESET){
-//			res = 'D';
-//			osMessageQueuePut(speedQueueHandle, &res, 0, 10);
-//		}
-//	}
+
 	osDelay(10);
   }
   /* USER CODE END 5 */
@@ -1064,29 +1053,17 @@ void StartDefaultTask(void *argument)
 
 
 void MovingTask(void *argument){
-	static int last_time = 0;
 	for(;;){
-		if(osMessageQueueGetCount(movingQueueHandle) < 1){
-			if(HAL_GetTick() - last_time > 200){
-				char res;
-				//osThreadNew(SingleBeepTask, NULL, &singleBeep_attributes);
-				if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_12) == GPIO_PIN_RESET){
-					res = 'L';
-					osMessageQueuePut(movingQueueHandle, &res, 0, 10);
-				}else if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_13) == GPIO_PIN_RESET){
-					res = 'R';
-					osMessageQueuePut(movingQueueHandle, &res, 0, 10);
-				}else if(HAL_GPIO_ReadPin(GPIOG, GPIO_PIN_2) == GPIO_PIN_RESET){
-					res = 'T';
-					osMessageQueuePut(movingQueueHandle, &res, 0, 10);
-				}else if(HAL_GPIO_ReadPin(GPIOG, GPIO_PIN_3) == GPIO_PIN_RESET){
-					res = 'D';
-					osMessageQueuePut(movingQueueHandle, &res, 0, 10);
-				}
-				last_time = HAL_GetTick();
-			}
-		}
-		osDelay(10);
+        uint32_t evt = osThreadFlagsWait(0x01, osFlagsWaitAny, osWaitForever);
+        if (evt & 0x01)
+        {
+            if (last_button != 0)
+            {
+            	if(osMessageQueueGetCount(movingQueueHandle) < 1)
+            		osMessageQueuePut(movingQueueHandle, &last_button, 0, 10);
+                last_button = 0;
+            }
+        }
 	}
 }
 
@@ -1112,7 +1089,8 @@ void DoubleBeepTask(void *param){
 void GameOverTask(void *param){
 	DF_SendCommand(0x0F, 0x02, 0x03);
 	osDelay(2000);
-	DF_SendCommand(0x0F, 0x02, 0x01);
+	if(currScreen == 1)	DF_SendCommand(0x0F, 0x02, 0x02);
+	else if(currScreen == 2) DF_SendCommand(0x0F, 0x02, 0x01);
 	osThreadExit();
 }
 
@@ -1148,8 +1126,40 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-	DF_SendCommand(0x19, 0x00, 0x00);
-	HAL_GPIO_TogglePin(GPIOG, GPIO_PIN_13);
+	static uint32_t last_time = 0;
+	if(GPIO_Pin == GPIO_PIN_0){
+		DF_SendCommand(0x19, 0x00, 0x00);
+//		if(currScreen == 1){
+//			DF_SendCommand(0x0F, 0x02, 0x02);
+//		}else if(currScreen == 2){
+//			DF_SendCommand(0x0F, 0x02, 0x01);
+//		}
+		HAL_GPIO_TogglePin(GPIOG, GPIO_PIN_13);
+	}else{
+		if(HAL_GetTick() - last_time < 200) return;
+		last_time = HAL_GetTick();
+
+		char res = 0;
+	    switch (GPIO_Pin)
+	    {
+	        case GPIO_PIN_12:
+	            res = 'L';
+	            break;
+	        case GPIO_PIN_13:
+	            res = 'R';
+	            break;
+	        case GPIO_PIN_2:
+	            res = 'T';
+	            break;
+	        case GPIO_PIN_3:
+	            res = 'D';
+	            break;
+	        default:
+	            return;
+	    }
+	    last_button = res;
+	    osThreadFlagsSet(movingTaskHandle, 0x01);
+	}
 }
 /**
   * @brief  This function is executed in case of error occurrence.

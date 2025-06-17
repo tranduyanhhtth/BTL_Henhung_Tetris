@@ -22,7 +22,7 @@ protected:
     BoxWithBorder colBoxes[20][10];		//lưới box hiển thị
     BoxWithBorder previewBoxes[4][4];	//next box
     int tickCount;						//biếm đếm
-    bool gameOver;						//trạng thái game
+    bool musicGameOver;					//trạng thái music game over
 };
 
 #endif // SCREEN2VIEW_HPP

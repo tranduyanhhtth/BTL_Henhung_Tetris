@@ -4,8 +4,7 @@
 #include "main.h"
 
 extern osMessageQueueId_t movingQueueHandle;
-extern osMessageQueueId_t speedQueueHandle;
-//extern void DoubleBeepTask(void *param);
+extern uint8_t currScreen;
 
 Screen2View::Screen2View()
 {
@@ -37,8 +36,9 @@ Screen2View::Screen2View()
 		}
 	}
 
+	currScreen = 2;
 	track1.setVisible(false);
-    gameOver = false;
+	musicGameOver = false;
     DF_SendCommand(0x0F, 0x02, 0x01);
 
     while(osMessageQueueGetCount(movingQueueHandle) > 0){
@@ -107,8 +107,9 @@ void Screen2View::handleTickEvent()
         	osThreadNew(DoubleBeepTask, NULL, NULL);
         	engine.setTakeScore(false);
         }
-        if(engine.isGameOver() && gameOver == false){
-        	gameOver = true;
+        if(engine.isGameOver() && musicGameOver == false){
+        	musicGameOver = true;
+//        	DF_SendCommand(0x0F, 0x02, 0x03);
         	osThreadNew(GameOverTask, NULL, NULL);
         }
         drawGrid();

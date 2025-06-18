@@ -25,6 +25,17 @@ namespace {
         // L
         {{0,0,1,0}, {1,1,1,0}, {0,0,0,0}, {0,0,0,0}},
     };
+
+    // Thêm màu cho khối
+    const uint16_t ColorPallette[7] = {
+		0xF800, // Red
+		0x07E0, // Green
+		0x001F, // Blue
+		0xFFE0, // Yellow
+		0xF81F, // Magenta
+		0x07FF, // Cyan
+		0xFFFF, // White
+    };
 }
 
 TetrisEngine::TetrisEngine() {
@@ -39,6 +50,7 @@ void TetrisEngine::init() {
 
 	// Dùng cho tạo khối tiếp theo
 	nextBlockId = -1;
+	nextBlockColor = 0;
 	generateNextBlock();
 
     //random khối mới
@@ -50,15 +62,17 @@ void TetrisEngine::generateNextBlock() {
     nextBlockId = osKernelGetTickCount() % 7;
     nextBlockSize = (nextBlockId == 0) ? 4 : 3;
     nextBlockSize = (nextBlockId == 1) ? 2 : nextBlockSize;
+    nextBlockColor = osKernelGetTickCount() % 7;
     for (int i = 0; i < 4; ++i)
         for (int j = 0; j < 4; ++j)
             nextBlock[i][j] = Tetrominoes[nextBlockId][i][j]; //đánh dấu các ô có thể hiển thị cho next block
 }
 
 //get next block (gán nextBlock và size nextBlock cho tham số truyền vào)
-void TetrisEngine::getNextBlock(BlockMatrix& block, int& size) const {
+void TetrisEngine::getNextBlock(BlockMatrix& block, int& size, uint16_t& color) const {
 	block = nextBlock;
 	size = nextBlockSize;
+	color = ColorPallette[nextBlockColor];
 }
 
 //gán khối mới cho khối hiện tại
@@ -68,6 +82,7 @@ void TetrisEngine::spawnBlock() {
         for (int j = 0; j < 4; ++j)
             currBlock[i][j] = nextBlock[i][j];	//gán nextBlock cho currBlock
     blockSize = nextBlockSize;
+    currBlockColor = nextBlockColor;
 
     //bắt đầu rơi tại vị trí giữa trên cùng
     currX = (GRID_WIDTH - blockSize) / 2;
@@ -124,7 +139,7 @@ void TetrisEngine::lockBlock() {
                 int gx = currX + j;
                 int gy = currY + i;
                 if (gy >= 0 && gy < GRID_HEIGHT && gx >= 0 && gx < GRID_WIDTH)
-                    grid[gy][gx] = 1;
+                    grid[gy][gx] = currBlockColor + 1;
             }
 
     //xóa đường nếu full -> gen khối mới
@@ -190,4 +205,13 @@ void TetrisEngine::rotate() {
     rotateMatrix(temp);
     if (!checkCollision(currX, currY, temp))
         currBlock = temp;
+}
+
+uint16_t TetrisEngine::getCurrentBlockColor() const {
+	return ColorPallette[currBlockColor];
+}
+
+uint16_t TetrisEngine::getGridColor(int x, int y) const {
+	if(grid[y][x] == 0) return 0x0000;
+	return ColorPallette[grid[y][x] - 1];
 }

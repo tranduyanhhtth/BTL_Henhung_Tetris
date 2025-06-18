@@ -6,6 +6,12 @@
 extern osMessageQueueId_t movingQueueHandle;
 extern uint8_t currScreen;
 
+static void convertRGB565ToRGB888(uint16_t rgb565, uint8_t& r, uint8_t& g, uint8_t& b) {
+    r = ((rgb565 >> 11) & 0x1F) << 3; // Extract 5-bit red, scale to 8-bit
+    g = ((rgb565 >> 5) & 0x3F) << 2;  // Extract 6-bit green, scale to 8-bit
+    b = (rgb565 & 0x1F) << 3;         // Extract 5-bit blue, scale to 8-bit
+}
+
 Screen2View::Screen2View()
 {
 	//khởi tạo lưới
@@ -118,7 +124,7 @@ void Screen2View::handleTickEvent()
 }
 
 void Screen2View::drawGrid(){
-    const auto& grid = engine.getGrid();
+//    const auto& grid = engine.getGrid();
     const auto& block = engine.getCurrentBlock();
     int currX = engine.getCurrX();
     int currY = engine.getCurrY();
@@ -126,13 +132,23 @@ void Screen2View::drawGrid(){
     //Vẽ lưới
     for (int y = 0; y < GRID_HEIGHT; ++y) {
         for (int x = 0; x < GRID_WIDTH; ++x) {
-            colBoxes[y][x].setColor(grid[y][x] ? Color::getColorFromRGB(255, 0, 255)
-                                               : Color::getColorFromRGB(0, 0, 0));
+//            colBoxes[y][x].setColor(grid[y][x] ? Color::getColorFromRGB(255, 0, 255)
+//                                               : Color::getColorFromRGB(0, 0, 0));
+        	uint16_t gridColor = engine.getGridColor(x, y);
+			uint8_t r, g, b;
+			convertRGB565ToRGB888(gridColor, r, g, b);
+			colBoxes[y][x].setColor(gridColor ? Color::getColorFromRGB(r, g, b)
+											 : Color::getColorFromRGB(0, 0, 0));
+			colBoxes[y][x].setAlpha(255);
             colBoxes[y][x].invalidate();
         }
     }
 
     // Vẽ block rơi
+    uint16_t blockColor = engine.getCurrentBlockColor();
+	uint8_t r, g, b;
+	convertRGB565ToRGB888(blockColor, r, g, b);
+
     int minX, maxX, minY, maxY;
     engine.getBlockBounds(block, minX, maxX, minY, maxY);
     for (int i = minY; i <= maxY; ++i)
@@ -141,7 +157,8 @@ void Screen2View::drawGrid(){
                 int gx = currX + j;
                 int gy = currY + i;
                 if (gx >= 0 && gx < GRID_WIDTH && gy >= 0 && gy < GRID_HEIGHT) {
-                    colBoxes[gy][gx].setColor(Color::getColorFromRGB(255, 255, 0));
+                    colBoxes[gy][gx].setColor(Color::getColorFromRGB(r, g, b));
+                    colBoxes[gy][gx].setAlpha(255);
                     colBoxes[gy][gx].invalidate();
                 }
             }
@@ -151,7 +168,8 @@ void Screen2View::drawPreview() {
     // Lấy khối tiếp theo
     TetrisEngine::BlockMatrix nextBlock;
     int nextBlockSize;
-    engine.getNextBlock(nextBlock, nextBlockSize);
+    uint16_t nextBlockColor;
+    engine.getNextBlock(nextBlock, nextBlockSize, nextBlockColor);
 
     // Reset all previewBoxes to transparent state
 	for (int i = 0; i < 4; ++i) {
@@ -160,6 +178,10 @@ void Screen2View::drawPreview() {
 			previewBoxes[i][j].invalidate();
 		}
 	}
+
+	// RGB565 -> RGB888
+	uint8_t r, g, b;
+	convertRGB565ToRGB888(nextBlockColor, r, g, b);
 
     // Vẽ preview block
 	int minX, maxX, minY, maxY;
@@ -171,7 +193,7 @@ void Screen2View::drawPreview() {
 				int px = j - minX;
 				int py = i - minY;
 				if (px < 4 && py < 4) {
-					previewBoxes[py][px].setColor(Color::getColorFromRGB(0, 255, 0));
+					previewBoxes[py][px].setColor(Color::getColorFromRGB(r, g, b));
 					previewBoxes[py][px].setAlpha(255);
 					previewBoxes[py][px].invalidate();
 				}

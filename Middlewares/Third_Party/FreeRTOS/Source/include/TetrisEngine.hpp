@@ -9,6 +9,7 @@
 #define APPLICATION_USER_GUI_TETRISENGINE_HPP_
 
 #include <array>
+#include <cstdint>
 #include <cstdlib>
 
 const int GRID_WIDTH = 10;
@@ -40,8 +41,10 @@ public:
     void setTakeScore(bool param) { takeScore = param; }
 	bool getTakeScore() const { return takeScore; }
 	void generateNextBlock();
-	void getNextBlock(BlockMatrix& block, int& size) const;
+	void getNextBlock(BlockMatrix& block, int& size, uint16_t& color) const;
 	bool isGameOver() const { return gameOver; }
+	uint16_t getCurrentBlockColor() const;
+	uint16_t getGridColor(int x, int y) const;
 
 private:
 	Grid grid;					//~ int grid[10][20] -> đánh dấu các ô trên lưới
@@ -54,6 +57,8 @@ private:
 	int nextBlockSize;			//size khối tiếp theo
 	int nextBlockId;			//id khối tiếp theo
 	BlockMatrix nextBlock;		//khối tiếp theo
+	int currBlockColor;
+	int nextBlockColor;
 
 	void spawnBlock();
 	bool checkCollision(int newX, int newY, const BlockMatrix& block);

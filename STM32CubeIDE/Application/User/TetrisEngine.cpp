@@ -207,10 +207,12 @@ void TetrisEngine::rotate() {
         currBlock = temp;
 }
 
+//màu của khối đang rơi
 uint16_t TetrisEngine::getCurrentBlockColor() const {
 	return ColorPallette[currBlockColor];
 }
 
+//màu lưới
 uint16_t TetrisEngine::getGridColor(int x, int y) const {
 	if(grid[y][x] == 0) return 0x0000;
 	return ColorPallette[grid[y][x] - 1];

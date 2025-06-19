@@ -6,10 +6,11 @@
 extern osMessageQueueId_t movingQueueHandle;
 extern uint8_t currScreen;
 
+// TouchGFX yêu cầu RGB888 để xử lý đúng màu (TetrisEngine dùng RGB565 để tiết kiệm bộ nhớ)
 static void convertRGB565ToRGB888(uint16_t rgb565, uint8_t& r, uint8_t& g, uint8_t& b) {
-    r = ((rgb565 >> 11) & 0x1F) << 3; // Extract 5-bit red, scale to 8-bit
-    g = ((rgb565 >> 5) & 0x3F) << 2;  // Extract 6-bit green, scale to 8-bit
-    b = (rgb565 & 0x1F) << 3;         // Extract 5-bit blue, scale to 8-bit
+    r = ((rgb565 >> 11) & 0x1F) << 3; // 5-bit red => 8-bit
+    g = ((rgb565 >> 5) & 0x3F) << 2;  // 6-bit green => 8-bit
+    b = (rgb565 & 0x1F) << 3;         // 5-bit blue => 8-bit
 }
 
 Screen2View::Screen2View()
@@ -171,7 +172,7 @@ void Screen2View::drawPreview() {
     uint16_t nextBlockColor;
     engine.getNextBlock(nextBlock, nextBlockSize, nextBlockColor);
 
-    // Reset all previewBoxes to transparent state
+    // Đặt lại previewBox trước về trạng thái trong suốt
 	for (int i = 0; i < 4; ++i) {
 		for (int j = 0; j < 4; ++j) {
 			previewBoxes[i][j].setAlpha(0);
@@ -179,11 +180,10 @@ void Screen2View::drawPreview() {
 		}
 	}
 
-	// RGB565 -> RGB888
+	// Vẽ preview block
 	uint8_t r, g, b;
 	convertRGB565ToRGB888(nextBlockColor, r, g, b);
 
-    // Vẽ preview block
 	int minX, maxX, minY, maxY;
 	engine.getBlockBounds(nextBlock, minX, maxX, minY, maxY);
 

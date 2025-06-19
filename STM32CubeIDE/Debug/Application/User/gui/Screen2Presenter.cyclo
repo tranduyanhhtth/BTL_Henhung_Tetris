@@ -1,9 +1,9 @@
 ../../TouchGFX/gui/include/gui/screen2_screen/Screen2Presenter.hpp:28:13:Screen2Presenter::~Screen2Presenter()	1
-D:/temp/BTL_Henhung_Tetris/TouchGFX/gui/src/screen2_screen/Screen2Presenter.cpp:10:6:virtual void Screen2Presenter::activate()	1
+C:/TouchGFXProjects/BTL_Henhung_Tetris/TouchGFX/gui/src/screen2_screen/Screen2Presenter.cpp:10:6:virtual void Screen2Presenter::activate()	1
 ../../TouchGFX/gui/include/gui/screen2_screen/Screen2Presenter.hpp:28:13:virtual Screen2Presenter::~Screen2Presenter()	1
 ../../TouchGFX/gui/include/gui/screen2_screen/Screen2Presenter.hpp:28:13:virtual void* Screen2Presenter::_ZThn4_N16Screen2PresenterD1Ev()	1
-D:/temp/BTL_Henhung_Tetris/TouchGFX/gui/src/screen2_screen/Screen2Presenter.cpp:4:1:Screen2Presenter::Screen2Presenter(Screen2View&)	1
-D:/temp/BTL_Henhung_Tetris/TouchGFX/gui/src/screen2_screen/Screen2Presenter.cpp:20:6:void Screen2Presenter::UpdateImageX(int16_t)	1
-D:/temp/BTL_Henhung_Tetris/TouchGFX/gui/src/screen2_screen/Screen2Presenter.cpp:25:9:int16_t Screen2Presenter::GetImageX()	1
-D:/temp/BTL_Henhung_Tetris/TouchGFX/gui/src/screen2_screen/Screen2Presenter.cpp:30:5:int Screen2Presenter::getHighestScore() const	1
-D:/temp/BTL_Henhung_Tetris/TouchGFX/gui/src/screen2_screen/Screen2Presenter.cpp:33:6:void Screen2Presenter::setHighestScore(int)	1
+C:/TouchGFXProjects/BTL_Henhung_Tetris/TouchGFX/gui/src/screen2_screen/Screen2Presenter.cpp:4:1:Screen2Presenter::Screen2Presenter(Screen2View&)	1
+C:/TouchGFXProjects/BTL_Henhung_Tetris/TouchGFX/gui/src/screen2_screen/Screen2Presenter.cpp:20:6:void Screen2Presenter::UpdateImageX(int16_t)	1
+C:/TouchGFXProjects/BTL_Henhung_Tetris/TouchGFX/gui/src/screen2_screen/Screen2Presenter.cpp:25:9:int16_t Screen2Presenter::GetImageX()	1
+C:/TouchGFXProjects/BTL_Henhung_Tetris/TouchGFX/gui/src/screen2_screen/Screen2Presenter.cpp:30:5:int Screen2Presenter::getHighestScore() const	1
+C:/TouchGFXProjects/BTL_Henhung_Tetris/TouchGFX/gui/src/screen2_screen/Screen2Presenter.cpp:33:6:void Screen2Presenter::setHighestScore(int)	1

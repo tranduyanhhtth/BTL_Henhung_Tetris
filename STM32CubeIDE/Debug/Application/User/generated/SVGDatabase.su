@@ -1,2 +1,2 @@
-D:/temp/BTL_Henhung_Tetris/TouchGFX/generated/images/src/SVGDatabase.cpp:10:27:const touchgfx::VGObject* SVGDatabase::getInstance()	0	static
-D:/temp/BTL_Henhung_Tetris/TouchGFX/generated/images/src/SVGDatabase.cpp:15:10:uint16_t SVGDatabase::getInstanceSize()	0	static
+C:/TouchGFXProjects/BTL_Henhung_Tetris/TouchGFX/generated/images/src/SVGDatabase.cpp:10:27:const touchgfx::VGObject* SVGDatabase::getInstance()	0	static
+C:/TouchGFXProjects/BTL_Henhung_Tetris/TouchGFX/generated/images/src/SVGDatabase.cpp:15:10:uint16_t SVGDatabase::getInstanceSize()	0	static

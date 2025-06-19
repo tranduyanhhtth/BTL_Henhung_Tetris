@@ -1,4 +1,5 @@
-Application/User/main.o: D:/temp/BTL_Henhung_Tetris/Core/Src/main.c \
+Application/User/main.o: \
+ C:/TouchGFXProjects/BTL_Henhung_Tetris/Core/Src/main.c \
  ../../Core/Inc/main.h \
  ../../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../../Core/Inc/stm32f4xx_hal_conf.h \

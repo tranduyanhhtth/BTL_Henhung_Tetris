@@ -1,6 +1,6 @@
-D:/temp/BTL_Henhung_Tetris/TouchGFX/generated/texts/src/TypedTextDatabase.cpp:43:43:const touchgfx::TypedText::TypedTextData* TypedTextDatabase::getInstance(touchgfx::LanguageId)	1
-D:/temp/BTL_Henhung_Tetris/TouchGFX/generated/texts/src/TypedTextDatabase.cpp:48:10:uint16_t TypedTextDatabase::getInstanceSize()	1
-D:/temp/BTL_Henhung_Tetris/TouchGFX/generated/texts/src/TypedTextDatabase.cpp:53:24:const touchgfx::Font** TypedTextDatabase::getFonts()	1
-D:/temp/BTL_Henhung_Tetris/TouchGFX/generated/texts/src/TypedTextDatabase.cpp:58:23:const touchgfx::Font* TypedTextDatabase::setFont(touchgfx::FontId, const touchgfx::Font*)	1
-D:/temp/BTL_Henhung_Tetris/TouchGFX/generated/texts/src/TypedTextDatabase.cpp:65:6:void TypedTextDatabase::resetFont(touchgfx::FontId)	4
-D:/temp/BTL_Henhung_Tetris/TouchGFX/generated/texts/src/TypedTextDatabase.cpp:80:1:cpp)	1
+C:/TouchGFXProjects/BTL_Henhung_Tetris/TouchGFX/generated/texts/src/TypedTextDatabase.cpp:43:43:const touchgfx::TypedText::TypedTextData* TypedTextDatabase::getInstance(touchgfx::LanguageId)	1
+C:/TouchGFXProjects/BTL_Henhung_Tetris/TouchGFX/generated/texts/src/TypedTextDatabase.cpp:48:10:uint16_t TypedTextDatabase::getInstanceSize()	1
+C:/TouchGFXProjects/BTL_Henhung_Tetris/TouchGFX/generated/texts/src/TypedTextDatabase.cpp:53:24:const touchgfx::Font** TypedTextDatabase::getFonts()	1
+C:/TouchGFXProjects/BTL_Henhung_Tetris/TouchGFX/generated/texts/src/TypedTextDatabase.cpp:58:23:const touchgfx::Font* TypedTextDatabase::setFont(touchgfx::FontId, const touchgfx::Font*)	1
+C:/TouchGFXProjects/BTL_Henhung_Tetris/TouchGFX/generated/texts/src/TypedTextDatabase.cpp:65:6:void TypedTextDatabase::resetFont(touchgfx::FontId)	4
+C:/TouchGFXProjects/BTL_Henhung_Tetris/TouchGFX/generated/texts/src/TypedTextDatabase.cpp:80:1:cpp)	1

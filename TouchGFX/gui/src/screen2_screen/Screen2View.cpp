@@ -15,7 +15,7 @@ static void convertRGB565ToRGB888(uint16_t rgb565, uint8_t& r, uint8_t& g, uint8
 
 Screen2View::Screen2View()
 {
-	//khởi tạo lưới
+	//khởi tạo lưới chính
     for (int y = 0; y < GRID_HEIGHT; y++) {
         for (int x = 0; x < GRID_WIDTH; x++) {
             int px = x * 16;
@@ -48,6 +48,7 @@ Screen2View::Screen2View()
 	musicGameOver = false;
     DF_SendCommand(0x0F, 0x02, 0x01);
 
+    //loại bỏ hết các phần tử trong moving queue
     while(osMessageQueueGetCount(movingQueueHandle) > 0){
     	char res = 'a';
     	osMessageQueueGet(movingQueueHandle, &res, NULL, 10);
@@ -74,13 +75,15 @@ void Screen2View::handleTickEvent()
     if (++tickCount % 20 == 0) {
 		if(engine.isGameOver()) {	//kiểm tra gameover
 
-			//set các ô là ko hiển thị nếu gameover
+			//set các ô trên lưới là ko hiển thị nếu gameover
 			for(int y = 0; y < GRID_HEIGHT; y++) {
 				for(int x = 0; x < GRID_WIDTH; x++) {
 					colBoxes[y][x].setVisible(false);
 					colBoxes[y][x].invalidate();
 				}
 			}
+
+			//set các ô trên pre boxes là ko hiển thị nếu gameover
 			for (int y = 0; y < 4; y++) {
 				for (int x = 0; x < 4; x++) {
 					previewBoxes[y][x].setVisible(false);
@@ -92,11 +95,11 @@ void Screen2View::handleTickEvent()
 			score.setVisible(false);
 			track1.setVisible(true);
 			track1.invalidate();
-			presenter->setHighestScore(engine.getScore());
+			presenter->setHighestScore(engine.getScore());	//cập nhật highest score
 			return;
 		}
 
-
+		//kiểm tra queue -> có phần tử -> có tín hiệu nút bấm điều khiển
     	if(osMessageQueueGetCount(movingQueueHandle) > 0){
     		char res;
     		osMessageQueueGet(movingQueueHandle, &res, NULL, 10);
@@ -106,20 +109,24 @@ void Screen2View::handleTickEvent()
     		else if(res == 'D') engine.drop();
     		osThreadNew(SingleBeepTask, NULL, NULL);
     	}
+    	//update hiển thị
         engine.update();
         Unicode::snprintf(scoreBuffer, SCORE_SIZE, "%d", engine.getScore());
         score.invalidate();
         presenter->setHighestScore(engine.getScore());
-        if(engine.getTakeScore()){
+
+        if(engine.getTakeScore()){	//nếu ghi được điểm -> tạo tiếng beep - beep
         	osThreadNew(DoubleBeepTask, NULL, NULL);
         	engine.setTakeScore(false);
         }
-        if(engine.isGameOver() && musicGameOver == false){
+        if(engine.isGameOver() && musicGameOver == false){ //game over -> bật nhạc game over
         	musicGameOver = true;
-//        	DF_SendCommand(0x0F, 0x02, 0x03);
         	osThreadNew(GameOverTask, NULL, NULL);
         }
+        //vẽ lại lưới chính
         drawGrid();
+
+        //vẽ lại lưới cho pre block
         drawPreview();
     }
 }
@@ -130,7 +137,7 @@ void Screen2View::drawGrid(){
     int currX = engine.getCurrX();
     int currY = engine.getCurrY();
 
-    //Vẽ lưới
+    //Vẽ lưới chính
     for (int y = 0; y < GRID_HEIGHT; ++y) {
         for (int x = 0; x < GRID_WIDTH; ++x) {
 //            colBoxes[y][x].setColor(grid[y][x] ? Color::getColorFromRGB(255, 0, 255)
@@ -145,16 +152,18 @@ void Screen2View::drawGrid(){
         }
     }
 
-    // Vẽ block rơi
+    // Vẽ block đang rơi
     uint16_t blockColor = engine.getCurrentBlockColor();
 	uint8_t r, g, b;
 	convertRGB565ToRGB888(blockColor, r, g, b);
 
+	//lấy bound của block (hình chữ nhật nhỏ nhất mà chứa được toàn bộ block)
     int minX, maxX, minY, maxY;
     engine.getBlockBounds(block, minX, maxX, minY, maxY);
     for (int i = minY; i <= maxY; ++i)
         for (int j = minX; j <= maxX; ++j)
             if (block[i][j]) {
+            	//vị trí thực của ô
                 int gx = currX + j;
                 int gy = currY + i;
                 if (gx >= 0 && gx < GRID_WIDTH && gy >= 0 && gy < GRID_HEIGHT) {

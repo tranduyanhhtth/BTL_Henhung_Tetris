@@ -14,12 +14,12 @@ public:
     virtual void tearDownScreen();
     virtual void handleTickEvent();
 
-    void drawGrid();
-    void drawPreview();
+    void drawGrid();	//vẽ lưới chính và block đang rơi
+    void drawPreview();	//vẽ pre block
 
 protected:
-    TetrisEngine engine;				//game engin
-    BoxWithBorder colBoxes[20][10];		//lưới box hiển thị
+    TetrisEngine engine;				//game engine
+    BoxWithBorder colBoxes[20][10];		//lưới box chính hiển thị
     BoxWithBorder previewBoxes[4][4];	//next box
     int tickCount;						//biếm đếm
     bool musicGameOver;					//trạng thái music game over

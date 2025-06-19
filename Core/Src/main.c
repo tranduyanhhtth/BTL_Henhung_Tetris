@@ -1054,13 +1054,17 @@ void StartDefaultTask(void *argument)
 
 void MovingTask(void *argument){
 	for(;;){
+
+		//chờ cờ 0x01 được set (chờ -> block state)
         uint32_t evt = osThreadFlagsWait(0x01, osFlagsWaitAny, osWaitForever);
         if (evt & 0x01)
         {
             if (last_button != 0)
             {
-            	if(osMessageQueueGetCount(movingQueueHandle) < 1)
+            	if(osMessageQueueGetCount(movingQueueHandle) < 1){
+            		//nếu queue chưa có phần tử -> gửi nút bấm được bấm gần nhất và queue
             		osMessageQueuePut(movingQueueHandle, &last_button, 0, 10);
+            	}
                 last_button = 0;
             }
         }
@@ -1139,25 +1143,27 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		if(HAL_GetTick() - last_time < 200) return;
 		last_time = HAL_GetTick();
 
+		//kiểm tra nút bấm tương ứng và đánh dấu nút bấm
 		char res = 0;
 	    switch (GPIO_Pin)
 	    {
 	        case GPIO_PIN_12:
-	            res = 'L';
+	            res = 'L';	//left
 	            break;
 	        case GPIO_PIN_13:
-	            res = 'R';
+	            res = 'R';	//right
 	            break;
 	        case GPIO_PIN_2:
-	            res = 'T';
+	            res = 'T';	//rotate
 	            break;
 	        case GPIO_PIN_3:
-	            res = 'D';
+	            res = 'D';	//down
 	            break;
 	        default:
 	            return;
 	    }
 	    last_button = res;
+	    //set cờ 0x01 -> thông báo movingTask (trigger)
 	    osThreadFlagsSet(movingTaskHandle, 0x01);
 	}
 }

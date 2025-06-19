@@ -22,6 +22,7 @@ void Screen1View::tearDownScreen()
 void Screen1View::handleTickEvent()
 {
 	tickCounter += 1;
+	//hiển thị điểm cao nhất đạt được
 	Unicode::snprintf(highestScoreBuffer, HIGHESTSCORE_SIZE, "%d", presenter->getHighestScore());
 	highestScore.invalidate();
 }

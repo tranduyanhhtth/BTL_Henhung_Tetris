@@ -47,7 +47,7 @@ public:
 	uint16_t getGridColor(int x, int y) const;
 
 private:
-	Grid grid;					//~ int grid[10][20] -> đánh dấu các ô trên lưới
+	Grid grid;					//~ int grid[20][10] -> đánh dấu các ô trên lưới
 	BlockMatrix currBlock;		//~ int currBlock[4][4] -> đánh dấu các ô cho block hiện tại
 	int currX, currY;			//vị trí của block
 	int blockSize;				//size của block

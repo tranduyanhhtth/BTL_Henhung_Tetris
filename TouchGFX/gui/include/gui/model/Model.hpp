@@ -24,7 +24,7 @@ public:
     int16_t ImageX;
 protected:
     ModelListener* modelListener;
-    int highestScore = 0;
+    int highestScore = 0; //lưu điểm cao nhất
 };
 
 #endif // MODEL_HPP

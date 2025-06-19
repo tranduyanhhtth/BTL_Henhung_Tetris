@@ -1,5 +1,5 @@
 Middlewares/FreeRTOS/croutine.o: \
- D:/temp/BTL_Henhung_Tetris/Middlewares/Third_Party/FreeRTOS/Source/croutine.c \
+ C:/TouchGFXProjects/BTL_Henhung_Tetris/Middlewares/Third_Party/FreeRTOS/Source/croutine.c \
  ../../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
  ../../Core/Inc/FreeRTOSConfig.h \
  ../../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h \

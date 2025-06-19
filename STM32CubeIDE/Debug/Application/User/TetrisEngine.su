@@ -8,10 +8,10 @@
 ../Application/User/TetrisEngine.cpp:116:6:bool TetrisEngine::checkCollision(int, int, const BlockMatrix&)	64	static
 ../Application/User/TetrisEngine.cpp:151:6:void TetrisEngine::clearLines()	32	static
 ../Application/User/TetrisEngine.cpp:135:6:void TetrisEngine::lockBlock()	24	static
-../Application/User/TetrisEngine.cpp:169:6:void TetrisEngine::update()	16	static
-../Application/User/TetrisEngine.cpp:183:6:void TetrisEngine::moveLeft()	16	static
-../Application/User/TetrisEngine.cpp:189:6:void TetrisEngine::moveRight()	16	static
-../Application/User/TetrisEngine.cpp:195:6:void TetrisEngine::drop()	24	static
-../Application/User/TetrisEngine.cpp:202:6:void TetrisEngine::rotate()	80	static
-../Application/User/TetrisEngine.cpp:210:10:uint16_t TetrisEngine::getCurrentBlockColor() const	0	static
-../Application/User/TetrisEngine.cpp:214:10:uint16_t TetrisEngine::getGridColor(int, int) const	0	static
+../Application/User/TetrisEngine.cpp:170:6:void TetrisEngine::update()	16	static
+../Application/User/TetrisEngine.cpp:184:6:void TetrisEngine::moveLeft()	16	static
+../Application/User/TetrisEngine.cpp:191:6:void TetrisEngine::moveRight()	16	static
+../Application/User/TetrisEngine.cpp:198:6:void TetrisEngine::drop()	24	static
+../Application/User/TetrisEngine.cpp:206:6:void TetrisEngine::rotate()	80	static
+../Application/User/TetrisEngine.cpp:216:10:uint16_t TetrisEngine::getCurrentBlockColor() const	0	static
+../Application/User/TetrisEngine.cpp:221:10:uint16_t TetrisEngine::getGridColor(int, int) const	0	static

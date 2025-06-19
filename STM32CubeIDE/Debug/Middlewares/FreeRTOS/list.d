@@ -1,5 +1,5 @@
 Middlewares/FreeRTOS/list.o: \
- C:/TouchGFXProjects/SimpleRacing/Middlewares/Third_Party/FreeRTOS/Source/list.c \
+ D:/temp/BTL_Henhung_Tetris/Middlewares/Third_Party/FreeRTOS/Source/list.c \
  ../../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
  ../../Core/Inc/FreeRTOSConfig.h \
  ../../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h \

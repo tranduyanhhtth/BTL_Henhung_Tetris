@@ -1,5 +1,5 @@
 Middlewares/FreeRTOS/event_groups.o: \
- C:/TouchGFXProjects/SimpleRacing/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c \
+ D:/temp/BTL_Henhung_Tetris/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c \
  ../../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
  ../../Core/Inc/FreeRTOSConfig.h \
  ../../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h \

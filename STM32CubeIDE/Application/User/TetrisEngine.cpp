@@ -59,7 +59,7 @@ void TetrisEngine::init() {
 
 //tạo khối mới
 void TetrisEngine::generateNextBlock() {
-    nextBlockId = osKernelGetTickCount() % 7;
+    nextBlockId = osKernelGetTickCount() % 7;	//lấy next box dựa trên tick hệ thống
     nextBlockSize = (nextBlockId == 0) ? 4 : 3;
     nextBlockSize = (nextBlockId == 1) ? 2 : nextBlockSize;
     nextBlockColor = osKernelGetTickCount() % 7;
@@ -99,7 +99,7 @@ void TetrisEngine::rotateMatrix(BlockMatrix& mat) {
     mat = temp;
 }
 
-//lấy đường biên của block
+//lấy đường biên của block (hình chữ nhật nhỏ nhất chứa được toàn bộ block)
 void TetrisEngine::getBlockBounds(const BlockMatrix& block, int& minX, int& maxX, int& minY, int& maxY) {
     minX = blockSize; maxX = 0; minY = blockSize; maxY = 0;
     for (int i = 0; i < blockSize; ++i)
@@ -142,20 +142,21 @@ void TetrisEngine::lockBlock() {
                     grid[gy][gx] = currBlockColor + 1;
             }
 
-    //xóa đường nếu full -> gen khối mới
+    //xóa đường nếu full + gen khối mới
     clearLines();
     spawnBlock();
 }
 
 //xóa line nếu full
 void TetrisEngine::clearLines() {
+	//kiểm tra các hàng từ dưới lên trên
     for (int y = GRID_HEIGHT - 1; y >= 0; --y) {
         bool full = true;
         for (int x = 0; x < GRID_WIDTH; ++x)
             if (!grid[y][x]) full = false; //-> có 1 ô chưa được đánh dấu -> chưa đầy hàng
 
         if (full) {
-        	takeScore = true;
+        	takeScore = true; //đánh dấu được tăng điểm -> bật buzzer sau đó
         	score++; //tăng điểm
             for (int row = y; row > 0; --row)
                 grid[row] = grid[row - 1];
@@ -173,7 +174,7 @@ void TetrisEngine::update() {
 		else{
 			lockBlock();
 			for(int i = 0; i < GRID_WIDTH; i++)
-				if(grid[0][i]) gameOver = true;
+				if(grid[0][i]) gameOver = true; //hàng trên cùng có khối -> game over
 		}
 	}
 
@@ -182,18 +183,21 @@ void TetrisEngine::update() {
 //di chuyển trái
 void TetrisEngine::moveLeft() {
 	if(gameOver) return;
+	//kiểm tra trước khi di chuyển
     if (!checkCollision(currX - 1, currY, currBlock)) currX--;
 }
 
 //di chuyển phải
 void TetrisEngine::moveRight() {
 	if(gameOver) return;
+	//kiểm tra trước khi di chuyển
     if (!checkCollision(currX + 1, currY, currBlock)) currX++;
 }
 
 //thả block
 void TetrisEngine::drop() {
 	if(gameOver) return;
+	//kiểm tra trước khi di chuyển
     while (!checkCollision(currX, currY + 1, currBlock)) currY++;
     lockBlock();
 }
@@ -203,6 +207,7 @@ void TetrisEngine::rotate() {
 	if(gameOver) return;
     BlockMatrix temp = currBlock;
     rotateMatrix(temp);
+    //kiểm tra trước khi di chuyển
     if (!checkCollision(currX, currY, temp))
         currBlock = temp;
 }

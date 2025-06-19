@@ -1,5 +1,5 @@
 Application/User/generated/VectorFontRendererBuffers.o: \
- C:/TouchGFXProjects/SimpleRacing/TouchGFX/generated/fonts/src/VectorFontRendererBuffers.cpp \
+ D:/temp/BTL_Henhung_Tetris/TouchGFX/generated/fonts/src/VectorFontRendererBuffers.cpp \
  ../../Middlewares/ST/touchgfx/framework/include/touchgfx/VectorFontRendererImpl.hpp \
  ../../Middlewares/ST/touchgfx/framework/include/touchgfx/hal/Types.hpp \
  ../../Middlewares/ST/touchgfx/framework/include/touchgfx/hal/Config.hpp \

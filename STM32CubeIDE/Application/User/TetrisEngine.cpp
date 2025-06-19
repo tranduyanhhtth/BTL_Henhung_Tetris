@@ -42,6 +42,11 @@ TetrisEngine::TetrisEngine() {
 	init();
 }
 
+/**
+ * @brief	Khởi tạo giá trị ban đầu cho các thuộc tính, tạo khối mới
+ * @param	None
+ * @retval	None
+ */
 void TetrisEngine::init() {
 	//Khởi tạo giá trị ban đầu cho grid
     for (auto& row : grid) row.fill(0);
@@ -57,7 +62,11 @@ void TetrisEngine::init() {
     spawnBlock();
 }
 
-//tạo khối mới
+/**
+ * @brief	Tạo khối mới và color cho khối
+ * @param	None
+ * @retval	None
+ */
 void TetrisEngine::generateNextBlock() {
     nextBlockId = osKernelGetTickCount() % 7;	//lấy next box dựa trên tick hệ thống
     nextBlockSize = (nextBlockId == 0) ? 4 : 3;
@@ -68,14 +77,24 @@ void TetrisEngine::generateNextBlock() {
             nextBlock[i][j] = Tetrominoes[nextBlockId][i][j]; //đánh dấu các ô có thể hiển thị cho next block
 }
 
-//get next block (gán nextBlock và size nextBlock cho tham số truyền vào)
+/**
+ * @brief	Get next block (gán nextBlock, size nextBlock và color cho tham số truyền vào)
+ * @param	block: BlockMatrix& khối cần thay đổi
+ * @param	size: int& biểu diễn kích thước của khối
+ * @param	color: uint16_t& biểu diễn màu của khối
+ * @retval	None
+ */
 void TetrisEngine::getNextBlock(BlockMatrix& block, int& size, uint16_t& color) const {
 	block = nextBlock;
 	size = nextBlockSize;
 	color = ColorPallette[nextBlockColor];
 }
 
-//gán khối mới cho khối hiện tại
+/**
+ * @brief	Gán khối mới cho khối hiện tại
+ * @param	None
+ * @retval	None
+ */
 void TetrisEngine::spawnBlock() {
     if (nextBlockId == -1) generateNextBlock(); // Spawn đầu
     for (int i = 0; i < 4; ++i)
@@ -90,7 +109,11 @@ void TetrisEngine::spawnBlock() {
     generateNextBlock(); // Tạo khối tiếp theo
 }
 
-//xoay block
+/**
+ * @brief	Xoay block
+ * @param	None
+ * @retval	None
+ */
 void TetrisEngine::rotateMatrix(BlockMatrix& mat) {
     BlockMatrix temp = {};
     for (int i = 0; i < blockSize; ++i)
@@ -99,7 +122,15 @@ void TetrisEngine::rotateMatrix(BlockMatrix& mat) {
     mat = temp;
 }
 
-//lấy đường biên của block (hình chữ nhật nhỏ nhất chứa được toàn bộ block)
+/**
+ * @brief	Lấy đường biên của block (hình chữ nhật nhỏ nhất chứa được toàn bộ block)
+ * @param	block: BlockMatrix& khối cần lấy đường biên
+ * @param	minX: int& lưu tọa độ x nhỏ nhất
+ * @param	maxX: int& lưu tọa độ x lớn nhất
+ * @param	minY: int& lưu tọa độ y nhỏ nhất
+ * @param	maxY: int& lưu tọa độ y lớn nhất
+ * @retval	None
+ */
 void TetrisEngine::getBlockBounds(const BlockMatrix& block, int& minX, int& maxX, int& minY, int& maxY) {
     minX = blockSize; maxX = 0; minY = blockSize; maxY = 0;
     for (int i = 0; i < blockSize; ++i)
@@ -112,7 +143,13 @@ void TetrisEngine::getBlockBounds(const BlockMatrix& block, int& minX, int& maxX
             }
 }
 
-//kiểm tra va trạm
+/**
+ * @brief	Kiểm tra va trạm của khối với tọa độ (x, y) mới
+ * @param	newX: int mô tả tọa độ x cần kiểm tra
+ * @param	newY: int mô tả tọa độ y cần kiểm tra
+ * @param	block: BlockMatrix& khối cần kiểm tra
+ * @retval	boolean True - va chạm, False - không va chạm
+ */
 bool TetrisEngine::checkCollision(int newX, int newY, const BlockMatrix& block) {
     int minX, maxX, minY, maxY;
 
@@ -131,7 +168,11 @@ bool TetrisEngine::checkCollision(int newX, int newY, const BlockMatrix& block) 
     return false;
 }
 
-//cố định lại block trên lưới
+/**
+ * @brief	Cố định lại block trên lưới và tạo khối mới
+ * @param	None
+ * @retval	None
+ */
 void TetrisEngine::lockBlock() {
     for (int i = 0; i < blockSize; ++i)
         for (int j = 0; j < blockSize; ++j)
@@ -147,7 +188,11 @@ void TetrisEngine::lockBlock() {
     spawnBlock();
 }
 
-//xóa line nếu full
+/**
+ * @brief	Xóa line nếu cả hàng đã full
+ * @param	None
+ * @retval	None
+ */
 void TetrisEngine::clearLines() {
 	//kiểm tra các hàng từ dưới lên trên
     for (int y = GRID_HEIGHT - 1; y >= 0; --y) {
@@ -166,7 +211,11 @@ void TetrisEngine::clearLines() {
     }
 }
 
-//check va chạm + khóa khối nếu được
+/**
+ * @brief	Check va chạm + khóa khối nếu được
+ * @param	None
+ * @retval	None
+ */
 void TetrisEngine::update() {
 	if(!gameOver){
 		if (!checkCollision(currX, currY + 1, currBlock))
@@ -180,21 +229,33 @@ void TetrisEngine::update() {
 
 }
 
-//di chuyển trái
+/**
+ * @brief	Di chuyển trái
+ * @param	None
+ * @retval	None
+ */
 void TetrisEngine::moveLeft() {
 	if(gameOver) return;
 	//kiểm tra trước khi di chuyển
     if (!checkCollision(currX - 1, currY, currBlock)) currX--;
 }
 
-//di chuyển phải
+/**
+ * @brief	Di chuyển phải
+ * @param	None
+ * @retval	None
+ */
 void TetrisEngine::moveRight() {
 	if(gameOver) return;
 	//kiểm tra trước khi di chuyển
     if (!checkCollision(currX + 1, currY, currBlock)) currX++;
 }
 
-//thả block
+/**
+ * @brief	Thả block
+ * @param	None
+ * @retval	None
+ */
 void TetrisEngine::drop() {
 	if(gameOver) return;
 	//kiểm tra trước khi di chuyển
@@ -202,7 +263,11 @@ void TetrisEngine::drop() {
     lockBlock();
 }
 
-//xoay block
+/**
+ * @brief	Xoay block
+ * @param	None
+ * @retval	None
+ */
 void TetrisEngine::rotate() {
 	if(gameOver) return;
     BlockMatrix temp = currBlock;
@@ -212,12 +277,21 @@ void TetrisEngine::rotate() {
         currBlock = temp;
 }
 
-//màu của khối đang rơi
+/**
+ * @brief	Lấy màu của khối đang rơi
+ * @param	None
+ * @retval	uint16_t màu của khối
+ */
 uint16_t TetrisEngine::getCurrentBlockColor() const {
 	return ColorPallette[currBlockColor];
 }
 
-//màu lưới
+/**
+ * @brief	Lấy màu của lưới
+ * @param	x: int biểu diễn tọa độ cần lấy màu
+ * @param	y: int biểu diễn tọa độ cần lấy màu
+ * @retval	uint16_t màu của ô
+ */
 uint16_t TetrisEngine::getGridColor(int x, int y) const {
 	if(grid[y][x] == 0) return 0x0000;
 	return ColorPallette[grid[y][x] - 1];

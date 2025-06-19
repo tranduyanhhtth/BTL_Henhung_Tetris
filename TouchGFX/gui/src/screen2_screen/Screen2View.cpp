@@ -6,7 +6,14 @@
 extern osMessageQueueId_t movingQueueHandle;
 extern uint8_t currScreen;
 
-// TouchGFX yêu cầu RGB888 để xử lý đúng màu (TetrisEngine dùng RGB565 để tiết kiệm bộ nhớ)
+/**
+ * @brief	TouchGFX yêu cầu RGB888 để xử lý đúng màu (TetrisEngine dùng RGB565 để tiết kiệm bộ nhớ)
+ * @param	rgb565: uint16_t màu cần chuyển sang RGB888
+ * @param	r: uint8_t& biểu diễn màu đỏ
+ * @param	g: uint8_t& biểu diễn màu xanh lá cây
+ * @param	b: uint8_t& biểu diễn màu xanh nước biển
+ * @retval	None
+ */
 static void convertRGB565ToRGB888(uint16_t rgb565, uint8_t& r, uint8_t& g, uint8_t& b) {
     r = ((rgb565 >> 11) & 0x1F) << 3; // 5-bit red => 8-bit
     g = ((rgb565 >> 5) & 0x3F) << 2;  // 6-bit green => 8-bit
@@ -70,6 +77,10 @@ void Screen2View::tearDownScreen()
 //    presenter->UpdateImageX(localImageX);
 }
 
+/**
+ * @brief	Xử lý game sau mỗi tick event (tương đương vòng loop để xử lý game)
+ * @retval	None
+ */
 void Screen2View::handleTickEvent()
 {
     if (++tickCount % 20 == 0) {
@@ -131,6 +142,10 @@ void Screen2View::handleTickEvent()
     }
 }
 
+/**
+ * @brief	Vẽ lưới game
+ * @retval	None
+ */
 void Screen2View::drawGrid(){
 //    const auto& grid = engine.getGrid();
     const auto& block = engine.getCurrentBlock();
@@ -174,6 +189,10 @@ void Screen2View::drawGrid(){
             }
 }
 
+/**
+ * @brief	Vẽ pre block
+ * @retval	None
+ */
 void Screen2View::drawPreview() {
     // Lấy khối tiếp theo
     TetrisEngine::BlockMatrix nextBlock;

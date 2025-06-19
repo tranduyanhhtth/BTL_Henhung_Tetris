@@ -1,5 +1,5 @@
 Application/User/generated/Table_arialbd_40_4bpp.o: \
- C:/TouchGFXProjects/BTL_Henhung_Tetris/TouchGFX/generated/fonts/src/Table_arialbd_40_4bpp.cpp \
+ C:/TouchGFXProjects/BTL_Henhung_Tetris-backup/TouchGFX/generated/fonts/src/Table_arialbd_40_4bpp.cpp \
  ../../TouchGFX/generated/fonts/include/fonts/GeneratedFont.hpp \
  ../../Middlewares/ST/touchgfx/framework/include/touchgfx/ConstFont.hpp \
  ../../Middlewares/ST/touchgfx/framework/include/touchgfx/Font.hpp \

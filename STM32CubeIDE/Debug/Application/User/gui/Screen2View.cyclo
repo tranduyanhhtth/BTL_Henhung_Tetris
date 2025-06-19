@@ -13,15 +13,15 @@
 ../../Middlewares/ST/touchgfx/framework/include/touchgfx/Screen.hpp:104:18:virtual void touchgfx::Screen::afterTransition()	1
 ../../Middlewares/ST/touchgfx/framework/include/touchgfx/Screen.hpp:154:18:virtual void touchgfx::Screen::handleKeyEvent(uint8_t)	1
 ../../TouchGFX/generated/gui_generated/include/gui_generated/screen2_screen/Screen2ViewBase.hpp:26:18:virtual void Screen2ViewBase::ExitFromScreen2()	1
-C:/TouchGFXProjects/BTL_Henhung_Tetris/TouchGFX/gui/src/screen2_screen/Screen2View.cpp:67:6:virtual void Screen2View::tearDownScreen()	1
-C:/TouchGFXProjects/BTL_Henhung_Tetris/TouchGFX/gui/src/screen2_screen/Screen2View.cpp:59:6:virtual void Screen2View::setupScreen()	1
+C:/TouchGFXProjects/BTL_Henhung_Tetris-backup/TouchGFX/gui/src/screen2_screen/Screen2View.cpp:74:6:virtual void Screen2View::tearDownScreen()	1
+C:/TouchGFXProjects/BTL_Henhung_Tetris-backup/TouchGFX/gui/src/screen2_screen/Screen2View.cpp:66:6:virtual void Screen2View::setupScreen()	1
 ../../TouchGFX/gui/include/gui/screen2_screen/Screen2View.hpp:12:13:Screen2View::~Screen2View()	3
 ../../TouchGFX/gui/include/gui/screen2_screen/Screen2View.hpp:12:13:virtual Screen2View::~Screen2View()	1
 ../../Middlewares/ST/touchgfx/framework/include/touchgfx/Drawable.hpp:121:18:virtual void touchgfx::Drawable::invalidateContent() const	2
 ../../Middlewares/ST/touchgfx/framework/include/touchgfx/widgets/Widget.hpp:45:18:virtual void touchgfx::Widget::getLastChild(int16_t, int16_t, touchgfx::Drawable**)	3
 ../../Middlewares/ST/touchgfx/framework/include/touchgfx/Drawable.hpp:233:10:void touchgfx::Drawable::setPosition(int16_t, int16_t, int16_t, int16_t)	1
 ../../Middlewares/ST/touchgfx/framework/include/touchgfx/widgets/Box.hpp:33:5:touchgfx::Box::Box()	1
-C:/TouchGFXProjects/BTL_Henhung_Tetris/TouchGFX/gui/src/screen2_screen/Screen2View.cpp:134:6:void Screen2View::drawGrid()	9
-C:/TouchGFXProjects/BTL_Henhung_Tetris/TouchGFX/gui/src/screen2_screen/Screen2View.cpp:177:6:void Screen2View::drawPreview()	8
-C:/TouchGFXProjects/BTL_Henhung_Tetris/TouchGFX/gui/src/screen2_screen/Screen2View.cpp:73:6:virtual void Screen2View::handleTickEvent()	16
-C:/TouchGFXProjects/BTL_Henhung_Tetris/TouchGFX/gui/src/screen2_screen/Screen2View.cpp:16:1:Screen2View::Screen2View()	10
+C:/TouchGFXProjects/BTL_Henhung_Tetris-backup/TouchGFX/gui/src/screen2_screen/Screen2View.cpp:149:6:void Screen2View::drawGrid()	9
+C:/TouchGFXProjects/BTL_Henhung_Tetris-backup/TouchGFX/gui/src/screen2_screen/Screen2View.cpp:196:6:void Screen2View::drawPreview()	8
+C:/TouchGFXProjects/BTL_Henhung_Tetris-backup/TouchGFX/gui/src/screen2_screen/Screen2View.cpp:84:6:virtual void Screen2View::handleTickEvent()	16
+C:/TouchGFXProjects/BTL_Henhung_Tetris-backup/TouchGFX/gui/src/screen2_screen/Screen2View.cpp:23:1:Screen2View::Screen2View()	10

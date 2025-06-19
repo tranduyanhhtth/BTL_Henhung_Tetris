@@ -82,34 +82,13 @@ char last_button = 0;
 
 uint8_t currScreen = 1;
 
-/* Definitions for defaultTask */
-osThreadId_t defaultTaskHandle;
-const osThreadAttr_t defaultTask_attributes = {
-  .name = "defaultTask",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
-};
-
+/* Definitions for movingTask */
 osThreadId_t movingTaskHandle;
 const osThreadAttr_t movingTask_attributes = {
   .name = "moving task",
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
-
-const osThreadAttr_t singleBeep_attributes = {
-  .name = "single beep task",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
-};
-
-
-const osThreadAttr_t doubleBeep_attributes = {
-  .name = "double beep task",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
-};
-
 
 /* Definitions for GUI_Task */
 osThreadId_t GUI_TaskHandle;
@@ -136,9 +115,7 @@ static void MX_FMC_Init(void);
 static void MX_LTDC_Init(void);
 static void MX_DMA2D_Init(void);
 static void MX_UART_Init(void);
-void StartDefaultTask(void *argument);
 void MovingTask(void *argument);
-void SingleBeepTask(void *param);
 extern void TouchGFX_Task(void *argument);
 
 /* USER CODE BEGIN PFP */
@@ -250,7 +227,6 @@ int main(void)
 
   /* Create the thread(s) */
   /* creation of defaultTask */
-  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
   movingTaskHandle = osThreadNew(MovingTask, NULL, &movingTask_attributes);
 
   /* creation of GUI_Task */
@@ -689,6 +665,7 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
+  /* EXTI interrupt init*/
   HAL_NVIC_SetPriority(EXTI0_IRQn, configMAX_SYSCALL_INTERRUPT_PRIORITY + 5, 0);
   HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 
@@ -700,10 +677,6 @@ static void MX_GPIO_Init(void)
 
   HAL_NVIC_SetPriority(EXTI3_IRQn, configMAX_SYSCALL_INTERRUPT_PRIORITY + 5, 0);
   HAL_NVIC_EnableIRQ(EXTI3_IRQn);
-
-  /* EXTI interrupt init*/
-  //HAL_NVIC_SetPriority(EXTI0_IRQn, configMAX_SYSCALL_INTERRUPT_PRIORITY+5 , 0);
-  //HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 }
 
 /* USER CODE BEGIN 4 */
@@ -1032,26 +1005,11 @@ void LCD_Delay(uint32_t Delay)
 
 /* USER CODE END 4 */
 
-/* USER CODE BEGIN Header_StartDefaultTask */
 /**
-  * @brief  Function implementing the defaultTask thread.
-  * @param  argument: Not used
+  * @brief	Task moving chờ sự kiện bấm nút để xử lý
+  * @param  argument: void* not used
   * @retval None
   */
-/* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void *argument)
-{
-  /* USER CODE BEGIN 5 */
-  /* Infinite loop */
-  for(;;)
-  {
-
-	osDelay(10);
-  }
-  /* USER CODE END 5 */
-}
-
-
 void MovingTask(void *argument){
 	for(;;){
 
@@ -1071,6 +1029,11 @@ void MovingTask(void *argument){
 	}
 }
 
+/**
+  * @brief	Task cho bật buzzer (beep)
+  * @param  param: void* not used
+  * @retval None
+  */
 void SingleBeepTask(void *param){
 	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_SET);
 	osDelay(50);
@@ -1079,6 +1042,11 @@ void SingleBeepTask(void *param){
 	osThreadExit();
 }
 
+/**
+  * @brief	Task cho bật buzzer (beep - beep)
+  * @param  param: void* not used
+  * @retval None
+  */
 void DoubleBeepTask(void *param){
 	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_SET);
 	osDelay(50);
@@ -1090,6 +1058,11 @@ void DoubleBeepTask(void *param){
 	osThreadExit();
 }
 
+/**
+  * @brief	Task cho bật nhạc game over
+  * @param  param: void* not used
+  * @retval None
+  */
 void GameOverTask(void *param){
 	DF_SendCommand(0x0F, 0x02, 0x03);
 	osDelay(2000);
@@ -1098,6 +1071,13 @@ void GameOverTask(void *param){
 	osThreadExit();
 }
 
+/**
+  * @brief	Gửi command cho module dfplayer
+  * @param  cmd: uint8_t command cần gửi
+  * @param  param1: uint8_t tham số thứ nhất
+  * @param  param2: uint8_t tham số thứ hai
+  * @retval None
+  */
 void DF_SendCommand(uint8_t cmd, uint8_t param1, uint8_t param2){
 	uint8_t buffer[10] = {0x7E, 0xFF, 0x06, cmd, 0x00, param1, param2, 0x00, 0x00, 0xEF};
 	uint16_t checksum = -(buffer[1] + buffer[2] + buffer[3] + buffer[4] + buffer[5] + buffer[6]);
@@ -1128,16 +1108,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   /* USER CODE END Callback 1 */
 }
 
+/**
+  * @brief	Hàm callback xử lý ngắt cho các chân GPIO
+  * @param  GPIO_Pin: uint16_t chân GPIO gửi ngắt
+  * @retval None
+  */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	static uint32_t last_time = 0;
 	if(GPIO_Pin == GPIO_PIN_0){
 		DF_SendCommand(0x19, 0x00, 0x00);
-//		if(currScreen == 1){
-//			DF_SendCommand(0x0F, 0x02, 0x02);
-//		}else if(currScreen == 2){
-//			DF_SendCommand(0x0F, 0x02, 0x01);
-//		}
 		HAL_GPIO_TogglePin(GPIOG, GPIO_PIN_13);
 	}else{
 		if(HAL_GetTick() - last_time < 200) return;
@@ -1175,7 +1155,7 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
-
+	while(1);
   /* USER CODE END Error_Handler_Debug */
 }
 

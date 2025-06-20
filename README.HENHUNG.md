@@ -47,7 +47,7 @@ __Sản phẩm:__
 
 ### ĐẶC TẢ HÀM
 
-*__[main.c][./Core/Src/main.c]__* 
+*__[main.c](./Core/Src/main.c)__*
 * ```C
     /**
      MovingTask chờ sự kiện bấm nút để xử lý

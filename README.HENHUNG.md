@@ -116,7 +116,7 @@ __Sản phẩm:__
         }
     }
   ```
-*__Screen2View.cpp__*
+*__[Screen2View.cpp](TouchGFX/gui/src/screen2_screen/Screen2View.cpp)__*
 * ```C
    static void convertRGB565ToRGB888(uint16_t rgb565, uint8_t& r, uint8_t& g, uint8_t& b) {
     r = ((rgb565 >> 11) & 0x1F) << 3; // 5-bit red => 8-bit
@@ -195,7 +195,7 @@ __Sản phẩm:__
         ...
     }
   ```
-*__Screen1View.cpp__*
+*__[Screen1View.cpp](TouchGFX/gui/src/screen1_screen/Screen1View.cpp)__*
 * ```C
    /**
      Start screen, chỉ hiển thị điểm và chờ người chơi bắt đầu.
@@ -207,7 +207,7 @@ __Sản phẩm:__
         highestScore.invalidate();
     }
   ```
-*__TetrisEngine.hpp__*
+*__[TetrisEngine.cpp](STM32CubeIDE/Application/User/TetrisEngine.cpp)__*
 * ```C
    /**
     Khởi tạo giá trị ban đầu cho các thuộc tính, tạo khối mới

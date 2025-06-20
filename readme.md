@@ -453,6 +453,6 @@ __Sản phẩm:__
 
 ### KẾT QUẢ
 
-- __[Game Over](./game_over.mp4)__
-- __[Xóa 1 hàng và ghi điểm](./score.mp4)__
-- __[Menu](./menu.mp4)__
+- __[Game Over](https://drive.google.com/file/d/1eeElNUyWyNIKZkc63TpHXxcuQwSknEhX/view?usp=drive_link)__
+- __[Xóa 1 hàng và ghi điểm](https://drive.google.com/file/d/1ek-P4CXJrpqP3QuKDYIKDcQoBoAH1cxF/view?usp=drive_link)__
+- __[Menu](https://drive.google.com/file/d/17Q8pMUBmj9RUoGlgDnyFrrQQ9smt2fgs/view?usp=drive_link)__

@@ -453,5 +453,6 @@ __Sản phẩm:__
 
 ### KẾT QUẢ
 
-- Các ảnh chụp với caption giải thích.
-- Hoặc video sản phẩm
+- __[Game Over](./game_over.mp4)__
+- __[Xóa 1 hàng và ghi điểm](./score.mp4)__
+- __[Menu](./menu.mp4)__

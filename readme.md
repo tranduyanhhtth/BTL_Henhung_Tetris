@@ -3,15 +3,17 @@
 __Đề bài__: Game Tetris
 
 __Sản phẩm:__
-1. Tính năng
-2. Tính năng
-3. Tính năng
+1. Hiển thị giao diện đồ họa với màn hình TFT 240x320 thông qua bộ điều khiển LTDC của board
+2. Điều khiển trò chơi bằng phím cứng: cho phép di chuyển các khối sang trái/phải, xoay, rơi
+3. Quản lý lưới, phát hiện va chạm, kiểm tra và xóa hàng đầy
+4. Chia cấp độ trò chơi với 3 mức easy, medium, hard
+5. Hiển thị điểm số, ghi điểm số cao nhất vào flash
 
 ![Ảnh minh họa dự án Tetris Game với STM32](./tetris.jpg)
 
 ## TÁC GIẢ
 
-- Tên nhóm: __Blink red__
+- Tên nhóm: __Áo hồng__
 - Thành viên trong nhóm
   |STT|Họ tên|MSSV|Công việc|
   |--:|--|--|--|
@@ -22,7 +24,8 @@ __Sản phẩm:__
 ## MÔI TRƯỜNG HOẠT ĐỘNG
 
 - STM32F429ZIT6
-- Bộ kit STM32F429I-DISCOVERY tích hợp cảm biến, màn hình cảm ứng
+- Bộ kit STM32F429ZIT6 tích hợp cảm biến, màn hình cảm ứng
+- Module dfplayer mini cho việc phát âm thanh
 
 ## SO ĐỒ SCHEMATIC
 ![image](./schematic.jpg)
@@ -35,7 +38,8 @@ __Sản phẩm:__
   |--|--|
   |STM32F429ZIT6|Bo mạch điều khiển chính, xử lý toàn bộ logic game và giao tiếp phần cứng|
   |Màn hình LCD|Hiển thị giao diện trò chơi Tetris và nhận thao tác Start qua cảm ứng|
-  |4 nút nhấn|Điều khiển trò chơi (di chuyển khối Tetris, xoay, thả nhanh, bắt đầu)|
+  |4 nút nhấn|Điều khiển trò chơi (di chuyển khối Tetris, xoay, thả nhanh)|
+  |Dfplayer mini|Giải mã thẻ nhớ, gửi tín hiệu âm thanh cho speaker|
   |Breadboard + dây nối	|Tạo mạch kết nối phần cứng giữa các thiết bị|
 
 * Phần mềm
@@ -44,10 +48,18 @@ __Sản phẩm:__
   |Firmware chính(C/C++)|Điều khiển game logic, xử lí giao tiếp với nút|
   |TouchGFX|Thiết kế giao diện game|
   |STM32CubeIDE|Môi trường phát triển, biên dịch và nạp chương trình|
+  |EasyEDA|Thiết kế Schematic|
 
 ### ĐẶC TẢ HÀM
 
 *__[main.c](./Core/Src/main.c)__*
+* ```C
+  //hàng đợi phục vụ cho việc di chuyển các khối
+  osMessageQueueId_t movingQueueHandle;
+
+  //hàng đợi cho set level
+  osMessageQueueId_t levelQueueHandle;
+  ```
 * ```C
     /**
      MovingTask chờ sự kiện bấm nút để xử lý
@@ -116,7 +128,38 @@ __Sản phẩm:__
         }
     }
   ```
+*__[Screen1View.cpp](TouchGFX/gui/src/screen1_screen/Screen1View.cpp)__*
+* ```C
+   /**
+     Start screen, chỉ hiển thị điểm và chờ người chơi bắt đầu.
+    */
+    void Screen1View::handleTickEvent() {
+        tickCounter += 1;
+        //hiển thị điểm cao nhất đạt được
+        Unicode::snprintf(highestScoreBuffer, HIGHESTSCORE_SIZE, "%d", presenter->getHighestScore());
+        highestScore.invalidate();
+    }
+  ```
 *__[Screen2View.cpp](TouchGFX/gui/src/screen2_screen/Screen2View.cpp)__*
+* ```C
+  /**
+   Các hàm callback xử lý khi chọn level cho game
+   */
+  void Screen2View::easyBtn();
+  void Screen2View::mediumBtn();
+  void Screen2View::hardBtn();
+  ```
+*__[Screen3View.hpp](TouchGFX/gui/include/screen3_screen/Screen3View.hpp)__*
+* ```C
+  /*Các thuộc tính của Screen3View*/
+  TetrisEngine engine;              //game engine
+  BoxWithBorder colBoxes[20][10];   //lưới box chính hiển thị
+  BoxWithBorder previewBoxes[4][4]; //next box
+  int tickCount;                    //biếm đếm
+  bool musicGameOver;               //trạng thái music game over
+  uint8_t level;                    //level game
+  ```
+*__[Screen3View.cpp](TouchGFX/gui/src/screen3_screen/Screen3View.cpp)__*
 * ```C
    static void convertRGB565ToRGB888(uint16_t rgb565, uint8_t& r, uint8_t& g, uint8_t& b) {
     r = ((rgb565 >> 11) & 0x1F) << 3; // 5-bit red => 8-bit
@@ -127,8 +170,8 @@ __Sản phẩm:__
    /**
     Xử lý game sau mỗi tick event (tương đương vòng loop để xử lý game)
     */
-    void Screen2View::handleTickEvent() {
-            if (++tickCount % 20 == 0) {
+    void Screen3View::handleTickEvent() {
+            if (++tickCount % level == 0) {
             if(engine.isGameOver()) {	//kiểm tra gameover
 
                 //set các ô trên lưới là ko hiển thị nếu gameover
@@ -164,7 +207,7 @@ __Sản phẩm:__
    /**
     Vẽ pre block
     */
-    void Screen2View::drawPreview() {
+    void Screen3View::drawPreview() {
         // Lấy khối tiếp theo
         ...
         engine.getNextBlock(nextBlock, nextBlockSize, nextBlockColor);
@@ -180,7 +223,7 @@ __Sản phẩm:__
    /**
     Vẽ lưới game
     */
-    void Screen2View::drawGrid(){
+    void Screen3View::drawGrid(){
         const auto& block = engine.getCurrentBlock();
         int currX = engine.getCurrX();
         int currY = engine.getCurrY();
@@ -195,17 +238,23 @@ __Sản phẩm:__
         ...
     }
   ```
-*__[Screen1View.cpp](TouchGFX/gui/src/screen1_screen/Screen1View.cpp)__*
+*__[TetrisEngine.hpp](STM32CubeIDE/Application/User/TetrisEngine.hpp)__*
 * ```C
-   /**
-     Start screen, chỉ hiển thị điểm và chờ người chơi bắt đầu.
-    */
-    void Screen1View::handleTickEvent() {
-        tickCounter += 1;
-        //hiển thị điểm cao nhất đạt được
-        Unicode::snprintf(highestScoreBuffer, HIGHESTSCORE_SIZE, "%d", presenter->getHighestScore());
-        highestScore.invalidate();
-    }
+  /**
+   Thuộc tính của TetrisEngine
+   */
+  Grid grid;              //~ int grid[10][20] -> đánh dấu các ô trên lưới
+  BlockMatrix currBlock;  //~ int currBlock[4][4] -> đánh dấu các ô cho block hiện tại
+  int currX, currY;       //vị trí của block
+  int blockSize;          //size của block
+  bool gameOver;          //trạng thái game
+  int score;              //điểm
+  bool takeScore;         //ghi điểm?
+  int nextBlockSize;      //size khối tiếp theo
+  int nextBlockId;        //id khối tiếp theo
+  BlockMatrix nextBlock;	//khối tiếp theo
+  int currBlockColor;     //màu khối hiện tại
+  int nextBlockColor;     //màu khối tiếp theo
   ```
 *__[TetrisEngine.cpp](STM32CubeIDE/Application/User/TetrisEngine.cpp)__*
 * ```C

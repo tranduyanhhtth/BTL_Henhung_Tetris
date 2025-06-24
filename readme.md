@@ -149,7 +149,7 @@ __Sản phẩm:__
   void Screen2View::mediumBtn();
   void Screen2View::hardBtn();
   ```
-*__[Screen3View.hpp](TouchGFX/gui/include/screen3_screen/Screen3View.hpp)__*
+*__[Screen3View.hpp](TouchGFX/gui/include/gui/screen3_screen/Screen3View.hpp)__*
 * ```C
   /*Các thuộc tính của Screen3View*/
   TetrisEngine engine;              //game engine
@@ -238,7 +238,7 @@ __Sản phẩm:__
         ...
     }
   ```
-*__[TetrisEngine.hpp](STM32CubeIDE/Application/User/TetrisEngine.hpp)__*
+*__[TetrisEngine.hpp](Middlewares/Third_Party/FreeRTOS/Source/include/TetrisEngine.hpp)__*
 * ```C
   /**
    Thuộc tính của TetrisEngine

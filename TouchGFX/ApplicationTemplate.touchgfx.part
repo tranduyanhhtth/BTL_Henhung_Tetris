@@ -18,10 +18,15 @@
     "Family": "STM32F4",
     "SubFamily": "STM32F429/439",
     "Platform": "m4",
+    "Toolchain": "STM32CubeIDE",
     "ProjectFile": "../STM32F429I_DISCO_REV_D01.ioc",
     "OptionalComponentsRoot": "../Middlewares/ST/touchgfx_components",
     "OptionalComponents": [
+    ],
+    "AdditionalFeatures": [
+      "CWRVector",
+      "VectorFonts"
     ]
   },
-  "Version": "4.20.0"
+  "Version": "4.25.0"
 }

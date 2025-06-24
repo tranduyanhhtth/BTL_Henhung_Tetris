@@ -3,8 +3,8 @@
 /*********************************************************************************/
 #include <gui_generated/screen1_screen/Screen1ViewBase.hpp>
 #include <touchgfx/Color.hpp>
-#include <images/BitmapDatabase.hpp>
 #include <texts/TextKeysAndLanguages.hpp>
+#include <images/BitmapDatabase.hpp>
 
 Screen1ViewBase::Screen1ViewBase() :
     buttonCallback(this, &Screen1ViewBase::buttonCallbackHandler)
@@ -13,30 +13,30 @@ Screen1ViewBase::Screen1ViewBase() :
     __background.setColor(touchgfx::Color::getColorFromRGB(0, 0, 0));
     add(__background);
 
-    button1.setXY(20, 199);
+    textArea1.setXY(6, 10);
+    textArea1.setColor(touchgfx::Color::getColorFromRGB(252, 216, 10));
+    textArea1.setLinespacing(0);
+    textArea1.setTypedText(touchgfx::TypedText(T___SINGLEUSE_1CQX));
+    add(textArea1);
+
+    textArea2.setXY(52, 93);
+    textArea2.setColor(touchgfx::Color::getColorFromRGB(245, 12, 12));
+    textArea2.setLinespacing(0);
+    textArea2.setTypedText(touchgfx::TypedText(T___SINGLEUSE_16LT));
+    add(textArea2);
+
+    highestScore.setPosition(0, 119, 240, 41);
+    highestScore.setColor(touchgfx::Color::getColorFromRGB(255, 0, 0));
+    highestScore.setLinespacing(0);
+    Unicode::snprintf(highestScoreBuffer, HIGHESTSCORE_SIZE, "%s", touchgfx::TypedText(T___SINGLEUSE_S6TU).getText());
+    highestScore.setWildcard(highestScoreBuffer);
+    highestScore.setTypedText(touchgfx::TypedText(T___SINGLEUSE_MS31));
+    add(highestScore);
+
+    button1.setXY(20, 208);
     button1.setBitmaps(touchgfx::Bitmap(BITMAP_START_BUTTON_VECTOR_ID), touchgfx::Bitmap(BITMAP_START_BUTTON_VECTOR_ID));
     button1.setAction(buttonCallback);
     add(button1);
-
-    textArea1.setXY(53, 103);
-    textArea1.setColor(touchgfx::Color::getColorFromRGB(240, 10, 10));
-    textArea1.setLinespacing(0);
-    textArea1.setTypedText(touchgfx::TypedText(T___SINGLEUSE_3G8C));
-    add(textArea1);
-
-    highestScore.setPosition(0, 139, 240, 42);
-    highestScore.setColor(touchgfx::Color::getColorFromRGB(252, 20, 20));
-    highestScore.setLinespacing(0);
-    Unicode::snprintf(highestScoreBuffer, HIGHESTSCORE_SIZE, "%s", touchgfx::TypedText(T_HSCORET).getText());
-    highestScore.setWildcard(highestScoreBuffer);
-    highestScore.setTypedText(touchgfx::TypedText(T_HSCORE));
-    add(highestScore);
-
-    textArea2.setXY(7, 14);
-    textArea2.setColor(touchgfx::Color::getColorFromRGB(252, 233, 15));
-    textArea2.setLinespacing(0);
-    textArea2.setTypedText(touchgfx::TypedText(T___SINGLEUSE_MXSW));
-    add(textArea2);
 }
 
 Screen1ViewBase::~Screen1ViewBase()
@@ -53,7 +53,7 @@ void Screen1ViewBase::buttonCallbackHandler(const touchgfx::AbstractButton& src)
 {
     if (&src == &button1)
     {
-        //Interaction2
+        //Interaction1
         //When button1 clicked change screen to Screen2
         //Go to Screen2 with screen transition towards East
         application().gotoScreen2ScreenCoverTransitionEast();

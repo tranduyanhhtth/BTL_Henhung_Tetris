@@ -8,8 +8,11 @@
 
 const uint16_t BITMAP_BACKGROUND_ID = 0;
 const uint16_t BITMAP_BLUE_ICONS_HOME_32_ID = 1;
-const uint16_t BITMAP_GAMEOVER_ID = 2;
-const uint16_t BITMAP_START_BUTTON_VECTOR_ID = 3;
+const uint16_t BITMAP_EASY_ID = 2;
+const uint16_t BITMAP_GAMEOVER_ID = 3;
+const uint16_t BITMAP_HARD_ID = 4;
+const uint16_t BITMAP_MEDIUM_ID = 5;
+const uint16_t BITMAP_START_BUTTON_VECTOR_ID = 6;
 
 namespace BitmapDatabase
 {

@@ -1,4 +1,4 @@
-C:/TouchGFXProjects/BTL_Henhung_Tetris-backup/TouchGFX/App/app_touchgfx.c:56:6:MX_TouchGFX_PreOSInit	0	static
-C:/TouchGFXProjects/BTL_Henhung_Tetris-backup/TouchGFX/App/app_touchgfx.c:63:6:MX_TouchGFX_Init	0	static
-C:/TouchGFXProjects/BTL_Henhung_Tetris-backup/TouchGFX/App/app_touchgfx.c:72:6:MX_TouchGFX_Process	0	static
-C:/TouchGFXProjects/BTL_Henhung_Tetris-backup/TouchGFX/App/app_touchgfx.c:81:6:TouchGFX_Task	0	static
+D:/Embedded/stm32cube/Embedded-C/TouchGFXProject/MyApplication_2/TouchGFX/App/app_touchgfx.c:58:6:MX_TouchGFX_PreOSInit	0	static
+D:/Embedded/stm32cube/Embedded-C/TouchGFXProject/MyApplication_2/TouchGFX/App/app_touchgfx.c:65:6:MX_TouchGFX_Init	8	static
+D:/Embedded/stm32cube/Embedded-C/TouchGFXProject/MyApplication_2/TouchGFX/App/app_touchgfx.c:75:6:MX_TouchGFX_Process	0	static
+D:/Embedded/stm32cube/Embedded-C/TouchGFXProject/MyApplication_2/TouchGFX/App/app_touchgfx.c:84:6:TouchGFX_Task	0	static

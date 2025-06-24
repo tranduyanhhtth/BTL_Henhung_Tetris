@@ -30,7 +30,6 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -67,11 +66,16 @@ void Error_Handler(void);
 #define FRAME_RATE_GPIO_Port GPIOE
 #define MCU_ACTIVE_Pin GPIO_PIN_5
 #define MCU_ACTIVE_GPIO_Port GPIOE
+#define SPI5_NCS_Pin GPIO_PIN_1
+#define SPI5_NCS_GPIO_Port GPIOC
+
 /* USER CODE BEGIN Private defines */
 void SingleBeepTask(void *param);
 void DoubleBeepTask(void *param);
 void DF_SendCommand(uint8_t cmd, uint8_t param1, uint8_t param2);
 void GameOverTask(void *param);
+uint32_t Flash_Write_Data (uint32_t StartPageAddress, uint32_t *Data, uint16_t numberofwords);
+void Flash_Read_Data (uint32_t StartPageAddress, uint32_t *RxBuf, uint16_t numberofwords);
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

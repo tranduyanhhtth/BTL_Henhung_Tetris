@@ -10,15 +10,13 @@ KEEP extern const uint32_t indicesGb[] TEXT_LOCATION_FLASH_ATTRIBUTE;
 // Remap all strings
 TEXT_LOCATION_FLASH_PRAGMA
 KEEP extern const uint32_t indicesGb[] TEXT_LOCATION_FLASH_ATTRIBUTE = {
-    33, // T___SINGLEUSE_JK4A: "Next"
-    8,  // T___SINGLEUSE_1D7L: "Score"
-    14, // T___SINGLEUSE_MXSW: "Tetris Game"
-    38, // T_HSCORET: "0"
-    26, // T_SCORE: "<>"
-    38, // T_SCORE_T: "0"
-    28, // T_HSCORE_T: "2342"
-    38, // T_WILDCARD1: "0"
-    26, // T_SCORE_TEXT: "<>"
-    26, // T_HSCORE: "<>"
-    0   // T___SINGLEUSE_3G8C: "Highest Score"
+    39, // T___SINGLEUSE_4X0T: "0"
+    26, // T___SINGLEUSE_HSY0: "<>"
+    8,  // T___SINGLEUSE_YAJW: "Score"
+    34, // T___SINGLEUSE_2ARM: "Next"
+    28, // T___SINGLEUSE_DG2Y: "Level"
+    39, // T___SINGLEUSE_S6TU: "0"
+    26, // T___SINGLEUSE_MS31: "<>"
+    0,  // T___SINGLEUSE_16LT: "Highest Score"
+    14  // T___SINGLEUSE_1CQX: "Tetris Game"
 };

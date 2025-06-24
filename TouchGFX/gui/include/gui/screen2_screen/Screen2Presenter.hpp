@@ -25,12 +25,7 @@ public:
      */
     virtual void deactivate();
 
-    virtual ~Screen2Presenter() {};
-    void UpdateImageX(int16_t x);
-    int16_t GetImageX();
-
-    int getHighestScore() const;
-    void setHighestScore(int score);
+    virtual ~Screen2Presenter() {}
 
 private:
     Screen2Presenter();

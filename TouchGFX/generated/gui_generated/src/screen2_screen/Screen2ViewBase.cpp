@@ -3,50 +3,43 @@
 /*********************************************************************************/
 #include <gui_generated/screen2_screen/Screen2ViewBase.hpp>
 #include <touchgfx/Color.hpp>
-#include <images/BitmapDatabase.hpp>
 #include <texts/TextKeysAndLanguages.hpp>
+#include <images/BitmapDatabase.hpp>
 
 Screen2ViewBase::Screen2ViewBase() :
+    buttonCallback(this, &Screen2ViewBase::buttonCallbackHandler),
     flexButtonCallback(this, &Screen2ViewBase::flexButtonCallbackHandler)
 {
     __background.setPosition(0, 0, 240, 320);
     __background.setColor(touchgfx::Color::getColorFromRGB(0, 0, 0));
     add(__background);
 
-    track0.setXY(0, 0);
-    track0.setBitmap(touchgfx::Bitmap(BITMAP_BACKGROUND_ID));
-    add(track0);
+    textArea1.setXY(68, 10);
+    textArea1.setColor(touchgfx::Color::getColorFromRGB(196, 195, 214));
+    textArea1.setLinespacing(0);
+    textArea1.setTypedText(touchgfx::TypedText(T___SINGLEUSE_DG2Y));
+    add(textArea1);
 
-    track1.setXY(0, 52);
-    track1.setBitmap(touchgfx::Bitmap(BITMAP_GAMEOVER_ID));
-    track1.setVisible(false);
-    add(track1);
+    easy.setXY(20, 75);
+    easy.setBitmaps(touchgfx::Bitmap(BITMAP_EASY_ID), touchgfx::Bitmap(BITMAP_EASY_ID));
+    easy.setAction(buttonCallback);
+    add(easy);
+
+    hard.setXY(20, 235);
+    hard.setBitmaps(touchgfx::Bitmap(BITMAP_HARD_ID), touchgfx::Bitmap(BITMAP_HARD_ID));
+    hard.setAction(buttonCallback);
+    add(hard);
+
+    medium.setXY(20, 155);
+    medium.setBitmaps(touchgfx::Bitmap(BITMAP_MEDIUM_ID), touchgfx::Bitmap(BITMAP_MEDIUM_ID));
+    medium.setAction(buttonCallback);
+    add(medium);
 
     flexButton1.setIconBitmaps(Bitmap(BITMAP_BLUE_ICONS_HOME_32_ID), Bitmap(BITMAP_BLUE_ICONS_HOME_32_ID));
     flexButton1.setIconXY(0, 0);
     flexButton1.setAction(flexButtonCallback);
-    flexButton1.setPosition(204, 282, 32, 32);
+    flexButton1.setPosition(207, 286, 33, 34);
     add(flexButton1);
-
-    score.setPosition(100, 166, 136, 49);
-    score.setColor(touchgfx::Color::getColorFromRGB(245, 12, 12));
-    score.setLinespacing(0);
-    Unicode::snprintf(scoreBuffer, SCORE_SIZE, "%s", touchgfx::TypedText(T_SCORE_T).getText());
-    score.setWildcard(scoreBuffer);
-    score.setTypedText(touchgfx::TypedText(T_SCORE));
-    add(score);
-
-    textArea1.setXY(185, 136);
-    textArea1.setColor(touchgfx::Color::getColorFromRGB(180, 17, 245));
-    textArea1.setLinespacing(0);
-    textArea1.setTypedText(touchgfx::TypedText(T___SINGLEUSE_1D7L));
-    add(textArea1);
-
-    textArea2.setXY(191, 54);
-    textArea2.setColor(touchgfx::Color::getColorFromRGB(158, 15, 247));
-    textArea2.setLinespacing(0);
-    textArea2.setTypedText(touchgfx::TypedText(T___SINGLEUSE_JK4A));
-    add(textArea2);
 }
 
 Screen2ViewBase::~Screen2ViewBase()
@@ -59,18 +52,53 @@ void Screen2ViewBase::setupScreen()
 
 }
 
+void Screen2ViewBase::buttonCallbackHandler(const touchgfx::AbstractButton& src)
+{
+    if (&src == &hard)
+    {
+        //Interaction1
+        //When hard clicked change screen to Screen3
+        //Go to Screen3 with screen transition towards East
+        application().gotoScreen3ScreenCoverTransitionEast();
+    
+        //handleHard
+        //When Interaction1 completed call virtual function
+        //Call hardBtn
+        hardBtn();
+    }
+    if (&src == &easy)
+    {
+        //Interaction2
+        //When easy clicked change screen to Screen3
+        //Go to Screen3 with screen transition towards East
+        application().gotoScreen3ScreenCoverTransitionEast();
+    
+        //handleEasy
+        //When Interaction2 completed call virtual function
+        //Call easyBtn
+        easyBtn();
+    }
+    if (&src == &medium)
+    {
+        //Interaction3
+        //When medium clicked change screen to Screen3
+        //Go to Screen3 with screen transition towards East
+        application().gotoScreen3ScreenCoverTransitionEast();
+    
+        //handleMedium
+        //When Interaction3 completed call virtual function
+        //Call mediumBtn
+        mediumBtn();
+    }
+}
+
 void Screen2ViewBase::flexButtonCallbackHandler(const touchgfx::AbstractButtonContainer& src)
 {
     if (&src == &flexButton1)
     {
-        //Interaction1
+        //Interaction4
         //When flexButton1 clicked change screen to Screen1
-        //Go to Screen1 with screen transition towards East
-        application().gotoScreen1ScreenWipeTransitionEast();
-    
-        //Interaction2
-        //When Interaction1 completed call virtual function
-        //Call ExitFromScreen2
-        ExitFromScreen2();
+        //Go to Screen1 with screen transition towards West
+        application().gotoScreen1ScreenWipeTransitionWest();
     }
 }

@@ -42,6 +42,18 @@ TetrisEngine::TetrisEngine() {
 	init();
 }
 
+uint32_t my_rand() {
+    // Tham số chuẩn của LCG: a = 1664525, c = 1013904223, m = 2^32
+	static uint32_t seed = 123456789;
+    seed = seed * 1664525 + osKernelGetTickCount();
+
+    seed ^= seed << 13;
+    seed ^= seed >> 17;
+    seed ^= seed << 5;
+
+    return seed;
+}
+
 /**
  * @brief	Khởi tạo giá trị ban đầu cho các thuộc tính, tạo khối mới
  * @param	None
@@ -51,7 +63,7 @@ void TetrisEngine::init() {
 	//Khởi tạo giá trị ban đầu cho grid
     for (auto& row : grid) row.fill(0);
     gameOver = false;
-    score = 0;
+    score = 22;
 
 	// Dùng cho tạo khối tiếp theo
 	nextBlockId = -1;
@@ -68,10 +80,10 @@ void TetrisEngine::init() {
  * @retval	None
  */
 void TetrisEngine::generateNextBlock() {
-    nextBlockId = osKernelGetTickCount() % 7;	//lấy next box dựa trên tick hệ thống
+    nextBlockId = my_rand() % 7;	//lấy next box dựa trên tick hệ thống
     nextBlockSize = (nextBlockId == 0) ? 4 : 3;
     nextBlockSize = (nextBlockId == 1) ? 2 : nextBlockSize;
-    nextBlockColor = osKernelGetTickCount() % 7;
+    nextBlockColor = my_rand() % 7;
     for (int i = 0; i < 4; ++i)
         for (int j = 0; j < 4; ++j)
             nextBlock[i][j] = Tetrominoes[nextBlockId][i][j]; //đánh dấu các ô có thể hiển thị cho next block

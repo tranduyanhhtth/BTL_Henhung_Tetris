@@ -8,10 +8,9 @@
 #include <mvp/View.hpp>
 #include <gui/screen2_screen/Screen2Presenter.hpp>
 #include <touchgfx/widgets/Box.hpp>
-#include <touchgfx/widgets/Image.hpp>
-#include <touchgfx/containers/buttons/Buttons.hpp>
-#include <touchgfx/widgets/TextAreaWithWildcard.hpp>
 #include <touchgfx/widgets/TextArea.hpp>
+#include <touchgfx/widgets/Button.hpp>
+#include <touchgfx/containers/buttons/Buttons.hpp>
 
 class Screen2ViewBase : public touchgfx::View<Screen2Presenter>
 {
@@ -23,7 +22,15 @@ public:
     /*
      * Virtual Action Handlers
      */
-    virtual void ExitFromScreen2()
+    virtual void hardBtn()
+    {
+        // Override and implement this function in Screen2
+    }
+    virtual void easyBtn()
+    {
+        // Override and implement this function in Screen2
+    }
+    virtual void mediumBtn()
     {
         // Override and implement this function in Screen2
     }
@@ -37,29 +44,24 @@ protected:
      * Member Declarations
      */
     touchgfx::Box __background;
-    touchgfx::Image track0;
-    touchgfx::Image track1;
-    touchgfx::IconButtonStyle< touchgfx::ClickButtonTrigger >  flexButton1;
-    touchgfx::TextAreaWithOneWildcard score;
     touchgfx::TextArea textArea1;
-    touchgfx::TextArea textArea2;
-
-    /*
-     * Wildcard Buffers
-     */
-    static const uint16_t SCORE_SIZE = 10;
-    touchgfx::Unicode::UnicodeChar scoreBuffer[SCORE_SIZE];
+    touchgfx::Button easy;
+    touchgfx::Button hard;
+    touchgfx::Button medium;
+    touchgfx::IconButtonStyle< touchgfx::ClickButtonTrigger >  flexButton1;
 
 private:
 
     /*
      * Callback Declarations
      */
+    touchgfx::Callback<Screen2ViewBase, const touchgfx::AbstractButton&> buttonCallback;
     touchgfx::Callback<Screen2ViewBase, const touchgfx::AbstractButtonContainer&> flexButtonCallback;
 
     /*
      * Callback Handler Declarations
      */
+    void buttonCallbackHandler(const touchgfx::AbstractButton& src);
     void flexButtonCallbackHandler(const touchgfx::AbstractButtonContainer& src);
 
 };

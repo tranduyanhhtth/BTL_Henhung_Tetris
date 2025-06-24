@@ -21,9 +21,7 @@
 #include "main.h"
 #include "cmsis_os.h"
 #include "app_touchgfx.h"
-#include "stm32f4xx_hal_uart.h"
 
-//stm32f4xx_hal_uart.h
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "Components/ili9341/ili9341.h"
@@ -64,7 +62,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
- CRC_HandleTypeDef hcrc;
+CRC_HandleTypeDef hcrc;
 
 DMA2D_HandleTypeDef hdma2d;
 
@@ -103,6 +101,12 @@ const osMessageQueueAttr_t movingQueue_attributes = {
 	.name = "moving queue",
 };
 
+osMessageQueueId_t levelQueueHandle;
+const osMessageQueueAttr_t levelQueue_attributes = {
+	.name = "level queue",
+};
+/* USER CODE BEGIN PV */
+uint8_t isRevD = 0; /* Applicable only for STM32F429I DISCOVERY REVD and above */
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -157,13 +161,13 @@ uint32_t I2c3Timeout = I2C3_TIMEOUT_MAX; /*<! Value of Timeout when I2C communic
 uint32_t Spi5Timeout = SPI5_TIMEOUT_MAX; /*<! Value of Timeout when SPI communication fails */
 /* USER CODE END 0 */
 
-
 /**
   * @brief  The application entry point.
   * @retval int
   */
 int main(void)
 {
+
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
@@ -194,6 +198,9 @@ int main(void)
   MX_DMA2D_Init();
   MX_TouchGFX_Init();
   MX_UART_Init();
+  /* Call PreOsInit function */
+  MX_TouchGFX_PreOSInit();
+  /* USER CODE BEGIN 2 */
 
   HAL_Delay(1000);
   DF_SendCommand(0x3F, 0, 0);
@@ -201,7 +208,6 @@ int main(void)
   DF_SendCommand(0x06, 0x00, 15);
   HAL_Delay(200);
   DF_SendCommand(0x0F, 0x02, 0x02);
-  /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
 
@@ -221,8 +227,9 @@ int main(void)
   /* USER CODE END RTOS_TIMERS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
-  /* creation of Queue1 */
+  /* add queues, ... */
   movingQueueHandle = osMessageQueueNew(4, sizeof(char), &movingQueue_attributes);
+  levelQueueHandle = osMessageQueueNew(4, sizeof(char), &levelQueue_attributes);
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
@@ -244,13 +251,13 @@ int main(void)
   osKernelStart();
 
   /* We should never get here as control is now taken by the scheduler */
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
-//	  HAL_UART_Transmit(&huart1, (const uint8_t*)"Hello\n", 7, 100);
-//	  HAL_Delay(1000);
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -278,10 +285,17 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 8;
-  RCC_OscInitStruct.PLL.PLLN = 336;
+  RCC_OscInitStruct.PLL.PLLN = 360;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 4;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Activate the Over-Drive mode
+  */
+  if (HAL_PWREx_EnableOverDrive() != HAL_OK)
   {
     Error_Handler();
   }
@@ -512,9 +526,19 @@ static void MX_SPI5_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN SPI5_Init 2 */
-
-
-
+  // Check if the board has the old or new revision of the gyroscope
+  // This tells if the board is revision D or newer
+  // It is used to handle the touch input correctly
+  const uint8_t READ_ID_CMD = 0x8F; // 0b10001111 = set read bit and register address of WHO_AM_I
+  uint8_t pdata = 0;
+  HAL_GPIO_WritePin(SPI5_NCS_GPIO_Port, SPI5_NCS_Pin, GPIO_PIN_RESET);
+  HAL_SPI_Transmit(&hspi5, &READ_ID_CMD, 1, 1000);
+  HAL_SPI_Receive(&hspi5, &pdata, 1, 1000);
+  HAL_GPIO_WritePin(SPI5_NCS_GPIO_Port, SPI5_NCS_Pin, GPIO_PIN_SET);
+  if (pdata == 0xD3) // 0b11010011
+  {
+    isRevD = 1;
+  }
   /* USER CODE END SPI5_Init 2 */
 
 }
@@ -593,6 +617,8 @@ static void MX_UART_Init(void){
 static void MX_GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
+  /* USER CODE BEGIN MX_GPIO_Init_1 */
+  /* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOE_CLK_ENABLE();
@@ -608,6 +634,9 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOE, VSYNC_FREQ_Pin|RENDER_TIME_Pin|FRAME_RATE_Pin|MCU_ACTIVE_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(SPI5_NCS_GPIO_Port, SPI5_NCS_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_2, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
@@ -619,6 +648,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : SPI5_NCS_Pin */
+  GPIO_InitStruct.Pin = SPI5_NCS_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(SPI5_NCS_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PC2 */
   GPIO_InitStruct.Pin = GPIO_PIN_2;
@@ -634,7 +670,9 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PA0 interrupt rising edge*/
+  /* USER CODE BEGIN MX_GPIO_Init_2 */
+
+  /*Configure GPIO pin : PC3 output*/
   GPIO_InitStruct.Pin = GPIO_PIN_3;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
@@ -654,12 +692,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
+  /*Configure GPIO pin : PG13 output*/
   GPIO_InitStruct.Pin = GPIO_PIN_13;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
 
-
+  /*Configure GPIO pin : PA0 interrupt rising edge*/
   GPIO_InitStruct.Pin = GPIO_PIN_0;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
   GPIO_InitStruct.Pull = GPIO_PULLDOWN;
@@ -677,6 +716,7 @@ static void MX_GPIO_Init(void)
 
   HAL_NVIC_SetPriority(EXTI3_IRQn, configMAX_SYSCALL_INTERRUPT_PRIORITY + 5, 0);
   HAL_NVIC_EnableIRQ(EXTI3_IRQn);
+  /* USER CODE END MX_GPIO_Init_2 */
 }
 
 /* USER CODE BEGIN 4 */
@@ -1067,7 +1107,7 @@ void GameOverTask(void *param){
 	DF_SendCommand(0x0F, 0x02, 0x03);
 	osDelay(2000);
 	if(currScreen == 1)	DF_SendCommand(0x0F, 0x02, 0x02);
-	else if(currScreen == 2) DF_SendCommand(0x0F, 0x02, 0x01);
+	else if(currScreen == 3) DF_SendCommand(0x0F, 0x02, 0x01);
 	osThreadExit();
 }
 
@@ -1087,32 +1127,94 @@ void DF_SendCommand(uint8_t cmd, uint8_t param1, uint8_t param2){
 	HAL_UART_Transmit(&huart4, buffer, 10, HAL_MAX_DELAY);
 }
 
-/**
-  * @brief  Period elapsed callback in non blocking mode
-  * @note   This function is called  when TIM6 interrupt took place, inside
-  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
-  * a global variable "uwTick" used as application time base.
-  * @param  htim : TIM handle
-  * @retval None
-  */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+uint32_t GetSector(uint32_t Address)
 {
-  /* USER CODE BEGIN Callback 0 */
-
-  /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM6) {
-    HAL_IncTick();
-  }
-  /* USER CODE BEGIN Callback 1 */
-
-  /* USER CODE END Callback 1 */
+    if (Address < 0x08004000) return FLASH_SECTOR_0;
+    else if (Address < 0x08008000) return FLASH_SECTOR_1;
+    else if (Address < 0x0800C000) return FLASH_SECTOR_2;
+    else if (Address < 0x08010000) return FLASH_SECTOR_3;
+    else if (Address < 0x08020000) return FLASH_SECTOR_4;
+    else if (Address < 0x08040000) return FLASH_SECTOR_5;
+    else if (Address < 0x08060000) return FLASH_SECTOR_6;
+    else if (Address < 0x08080000) return FLASH_SECTOR_7;
+    else if (Address < 0x080A0000) return FLASH_SECTOR_8;
+    else if (Address < 0x080C0000) return FLASH_SECTOR_9;
+    else if (Address < 0x080E0000) return FLASH_SECTOR_10;
+    else if (Address < 0x08100000) return FLASH_SECTOR_11;
+    else if (Address < 0x08104000) return FLASH_SECTOR_12;
+    else if (Address < 0x08108000) return FLASH_SECTOR_13;
+    else if (Address < 0x0810C000) return FLASH_SECTOR_14;
+    else if (Address < 0x08110000) return FLASH_SECTOR_15;
+    else if (Address < 0x08120000) return FLASH_SECTOR_16;
+    else if (Address < 0x08140000) return FLASH_SECTOR_17;
+    else if (Address < 0x08160000) return FLASH_SECTOR_18;
+    else if (Address < 0x08180000) return FLASH_SECTOR_19;
+    else if (Address < 0x081A0000) return FLASH_SECTOR_20;
+    else if (Address < 0x081C0000) return FLASH_SECTOR_21;
+    else if (Address < 0x081E0000) return FLASH_SECTOR_22;
+    else if (Address < 0x08200000) return FLASH_SECTOR_23;
+    else return 0xFFFFFFFF; // Địa chỉ không hợp lệ
 }
 
-/**
-  * @brief	Hàm callback xử lý ngắt cho các chân GPIO
-  * @param  GPIO_Pin: uint16_t chân GPIO gửi ngắt
-  * @retval None
-  */
+uint32_t Flash_Write_Data (uint32_t StartSectorAddress, uint32_t *Data, uint16_t numberofwords)
+{
+	static FLASH_EraseInitTypeDef EraseInitStruct;
+	uint32_t SECTORError;
+	int sofar=0;
+	/* Unlock the Flash to enable the flash control register access *************/
+	HAL_FLASH_Unlock();
+	/* Erase the user Flash area */
+	/* Get the number of sector to erase from 1st sector */
+	uint32_t StartSector = GetSector(StartSectorAddress);
+	uint32_t EndSectorAddress = StartSectorAddress + numberofwords*4;
+	uint32_t EndSector = GetSector(EndSectorAddress);
+	/* Fill EraseInit structure*/
+	EraseInitStruct.TypeErase     = FLASH_TYPEERASE_SECTORS;
+	EraseInitStruct.VoltageRange  = FLASH_VOLTAGE_RANGE_3;
+	EraseInitStruct.Sector        = StartSector;
+	EraseInitStruct.NbSectors     = (EndSector - StartSector) + 1;
+
+	if (HAL_FLASHEx_Erase(&EraseInitStruct, &SECTORError) != HAL_OK)
+	{
+		return HAL_FLASH_GetError ();
+	}
+	/* Program the user Flash area word by word
+	(area defined by FLASH_USER_START_ADDR and FLASH_USER_END_ADDR) ***********/
+    __HAL_FLASH_DATA_CACHE_DISABLE();
+    __HAL_FLASH_INSTRUCTION_CACHE_DISABLE();
+    __HAL_FLASH_DATA_CACHE_RESET();
+    __HAL_FLASH_INSTRUCTION_CACHE_RESET();
+    __HAL_FLASH_INSTRUCTION_CACHE_ENABLE();
+    __HAL_FLASH_DATA_CACHE_ENABLE();
+
+	while (sofar < numberofwords)
+	{
+		if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, StartSectorAddress, Data[sofar]) == HAL_OK)
+		{
+			StartSectorAddress += 4;  // use StartPageAddress += 2 for half word and 8 for double word
+			sofar++;
+		}
+		else
+		{
+			/* Error occurred while writing data in Flash memory*/
+			return HAL_FLASH_GetError ();
+		}
+	}
+	/* Lock the Flash to disable the flash control register access (recommended
+	to protect the FLASH memory against possible unwanted operation) *********/
+	HAL_FLASH_Lock();
+	return 0;
+}
+
+void Flash_Read_Data(uint32_t StartAddress, uint32_t *RxBuf, uint16_t NumberOfWords)
+{
+    for (uint16_t i = 0; i < NumberOfWords; i++)
+    {
+        RxBuf[i] = *(__IO uint32_t *)StartAddress;
+        StartAddress += 4;
+    }
+}
+
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	static uint32_t last_time = 0;
@@ -1147,6 +1249,30 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	    osThreadFlagsSet(movingTaskHandle, 0x01);
 	}
 }
+
+
+/**
+  * @brief  Period elapsed callback in non blocking mode
+  * @note   This function is called  when TIM6 interrupt took place, inside
+  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+  * a global variable "uwTick" used as application time base.
+  * @param  htim : TIM handle
+  * @retval None
+  */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  /* USER CODE BEGIN Callback 0 */
+
+  /* USER CODE END Callback 0 */
+  if (htim->Instance == TIM6)
+  {
+    HAL_IncTick();
+  }
+  /* USER CODE BEGIN Callback 1 */
+
+  /* USER CODE END Callback 1 */
+}
+
 /**
   * @brief  This function is executed in case of error occurrence.
   * @retval None

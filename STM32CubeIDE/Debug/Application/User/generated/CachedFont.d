@@ -1,5 +1,5 @@
 Application/User/generated/CachedFont.o: \
- C:/TouchGFXProjects/BTL_Henhung_Tetris-backup/TouchGFX/generated/fonts/src/CachedFont.cpp \
+ D:/Embedded/stm32cube/Embedded-C/TouchGFXProject/MyApplication_2/TouchGFX/generated/fonts/src/CachedFont.cpp \
  ../../TouchGFX/generated/fonts/include/fonts/CachedFont.hpp \
  ../../TouchGFX/generated/fonts/include/fonts/FontCache.hpp \
  ../../Middlewares/ST/touchgfx/framework/include/touchgfx/Font.hpp \

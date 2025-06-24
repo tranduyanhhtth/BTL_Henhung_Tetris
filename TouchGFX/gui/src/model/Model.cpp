@@ -1,25 +1,19 @@
 #include <gui/model/Model.hpp>
 #include <gui/model/ModelListener.hpp>
+#include "main.h"
 
-Model::Model() : ImageX(95), modelListener(0)
+Model::Model() : modelListener(0)
 {
 	modelTickCount = 0;
-	highestScore = 0;
+//	highestScore = 0;
+	uint32_t score = 0;
+	Flash_Read_Data(0x08104000, &score, 1);
+	highestScore = score;
 }
 
 void Model::tick()
 {
 	modelTickCount++;
-}
-
-void Model::update(int16_t x)
-{
-	ImageX = x;
-}
-
-int16_t Model::GetImageX()
-{
-	return ImageX;
 }
 
 int Model::getHighestScore() const {

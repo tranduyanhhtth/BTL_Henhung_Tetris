@@ -28,7 +28,7 @@ __Sản phẩm:__
 - Module dfplayer mini cho việc phát âm thanh
 
 ## SO ĐỒ SCHEMATIC
-![image](./schematic.jpg)
+![image](./Schematic.png)
 
 
 ### TÍCH HỢP HỆ THỐNG

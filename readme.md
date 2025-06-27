@@ -18,7 +18,7 @@ __Sản phẩm:__
   |STT|Họ tên|MSSV|Công việc|
   |--:|--|--|--|
   |1|Kiều Văn Bảo|20225261|Phát triển logic game, xử lý ngắt, flash|
-  |2|Trần Duy Anh|20225256|phát triển logic tạo khối, di chuyển khối|
+  |2|Trần Duy Anh|20225256|phát triển logic tạo khối, di chuyển khối, đổ màu khối|
   |3|Vũ Tiến An Nguyên|20225148|Viết báo cáo, kiểm thử, phát triển logic game|
 
 ## MÔI TRƯỜNG HOẠT ĐỘNG
